@@ -24,7 +24,25 @@
 
     <main class="mp-container">
         <h1>Hubungi Kami</h1>
-        <p>Untuk pertanyaan, sila hantarkan email ke <a href="mailto:info@mypetroleum.example">info@mypetroleum.example</a> atau hubungi talian sokongan.</p>
+            <p>
+            Para Syarikat Bunker boleh menghubungi maklumat yang tertera jika terdapat sebarang keraguan atau persoalan yang mungkin timbul.
+            <br>
+            <br>Jabatan Kastam Diraja Malaysia,
+            <br>Wisma Kastam Ayer keroh,
+            <br>75450 Melaka
+            <br>06-232 5855 (Talian Umum)
+
+            <br><br>Meja bantuan :
+
+            <br>Tn Razidi Bin Abu
+                    <br>Penolong Pengarah Kastam 
+                    <br>emel : razidi.abu@customs.gov.my
+
+            <br><br>En Hairulazuan Bin Hairullah
+                    <br>Pegawai Kastam Tinggi
+                    <br>Emel : hairulazuan.hairullah@customs.gov.my
+
+        </p>
     </main>
 </body>
 </html>

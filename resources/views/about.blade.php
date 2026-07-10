@@ -25,7 +25,10 @@
 
     <main class="mp-container">
         <h1>Mengenai MyPetroleum</h1>
-        <p>Halaman ini adalah penerangan ringkas mengenai MyPetroleum. Gantikan kandungan ini dengan teks sebenar.</p>
+        <p>MyPetroleum JKDM - Sistem Maklumat Bunker Petroleum.
+        <br><br>Laman ini  dibangunkan sebagai satu platform kepada mana-mana orang yang diluluskan untuk menjalankan perkhidmatan bunkering di bawah Akta Kemajuan Petroleum 1974 memohon kelulusan pengecualian cukai jualan di bawah Butiran 58 A Perintah Cukai Jualan (Orang Yang Dikecualikan Daripada Pembayaran Cukai) 2018.
+        <br><br>Bunkering adalah kegiatan menyalurkan apa-apa jenis bahan api (produk petroleum)untuk menggerakkan/ kegunaan enjin kapal di dalam had pelabuhan atau jeti yang diberi kebenaran oleh Jabatan Kastam Diraja Malaysia.
+        </p>
     </main>
 </body>
 </html>

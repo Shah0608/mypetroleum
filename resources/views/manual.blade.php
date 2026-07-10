@@ -24,7 +24,14 @@
 
     <main class="mp-container">
         <h1>Manual Pengguna</h1>
-        <p>Ringkasan manual pengguna. Gantikan ini dengan pautan PDF atau kandungan manual penuh.</p>
+        <p>
+            Bagaimana Untuk Menggunakan Sistem MyPetroleum?
+
+            <br><br>Para syarikat bunker boleh mengakses Sistem MyPetroleum (Sistem Maklumat Bunker) menggunakan aplikasi browser laman sesawang (Sila gunakan Chrome untuk paparan terbaik) dengan melayari url <a href="http://mypetroleum.customs.gov.my/" target="_blank">http://mypetroleum.customs.gov.my/</a>
+
+            <br><br>Untuk pemohon baharu, sila klik pada pautan “BORANG ID" untuk mendapatkan  Borang ID MyPetroleum. Sila isikan semua maklumat yang diperlukan di dalam borang tersebut dan emel kepada pentadbir sistem seperti di alamat di butang ‘HUBUNGI KAMI”. Permohonan anda akan diproses dan jika diluluskan, anda akan diberikan kata nama dan kata laluan untuk log masuk ke dalam sistem ini dalam tempoh 2 hari. Sila rujuk emel anda untuk sebarang maklumat berkaitan permohonan yang telah dilaksanakan.
+
+        </p>
     </main>
 </body>
 </html>

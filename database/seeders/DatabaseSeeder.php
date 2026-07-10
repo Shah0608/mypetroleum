@@ -15,20 +15,24 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $users = [
+            [
+                'name' => 'Syarikat Test ABC',
+                'login_id' => '731215055543',
+                'role' => 'syarikat',
+            ],
+            [
+                'name' => 'Pegawai JKDM',
+                'login_id' => '731215055544',
+                'role' => 'jkdm',
+            ],
+        ];
 
-        User::create([
-            'name' => 'Syarikat Test ABC',
-            'login_id' => '731215055543',
-            'role' => 'syarikat',
-            'password' => bcrypt('kastam'),
-        ]);
-
-        User::create([
-            'name' => 'Pegawai JKDM',
-            'login_id' => '731215055543',
-            'role' => 'jkdm',
-            'password' => bcrypt('kastam'),
-        ]);
+        foreach ($users as $user) {
+            User::updateOrCreate(
+                ['login_id' => $user['login_id']],
+                $user + ['password' => 'kastam']
+            );
+        }
     }
 }
