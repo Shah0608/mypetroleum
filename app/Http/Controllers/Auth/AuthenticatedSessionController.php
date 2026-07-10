@@ -29,15 +29,19 @@ class AuthenticatedSessionController extends Controller
 
         $user = Auth::user();
 
-        if ($user->role === 'admin') {
-            return redirect()->intended(route('admin.utama'));
+        $redirectTo = match ($user->role) {
+            'admin' => route('admin.utama'),
+            'jkdm' => route('jkdm.utama'),
+            default => route('syarikat.utama'),
+        };
+
+        $intended = $request->session()->get('url.intended');
+
+        if ($intended !== null && ! str_starts_with($intended, url('/'.$user->role))) {
+            $request->session()->forget('url.intended');
         }
 
-        if ($user->role === 'jkdm') {
-            return redirect()->intended(route('jkdm.utama'));
-        }
-
-        return redirect()->intended(route('syarikat.utama'));
+        return redirect()->intended($redirectTo);
     }
 
     /**

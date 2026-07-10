@@ -5,6 +5,14 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return match (auth()->user()->role) {
+            'admin' => redirect()->route('admin.utama'),
+            'jkdm' => redirect()->route('jkdm.utama'),
+            default => redirect()->route('syarikat.utama'),
+        };
+    }
+
     return view('main');
 });
 

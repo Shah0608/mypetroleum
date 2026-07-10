@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
         $users = [
             [
                 'name' => 'Syarikat Test ABC',
-                'login_id' => '731215055543',
+                'login_id' => '731215055544',
                 'role' => 'syarikat',
             ],
             [
@@ -28,14 +28,14 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Admin Sistem',
-                'login_id' => '731215055545',
+                'login_id' => '731215055544',
                 'role' => 'admin',
             ],
         ];
 
         foreach ($users as $user) {
             User::updateOrCreate(
-                ['login_id' => $user['login_id']],
+                ['login_id' => $user['login_id'], 'role' => $user['role']],
                 $user + ['password' => 'kastam']
             );
         }

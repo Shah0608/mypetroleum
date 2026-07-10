@@ -30,6 +30,7 @@ class LoginRequest extends FormRequest
         return [
             'login_id' => ['required', 'string'],
             'password' => ['required', 'string'],
+            'user_type' => ['required', 'string', 'in:syarikat,jkdm,admin'],
         ];
     }
 
@@ -42,7 +43,9 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('login_id', 'password'), $this->boolean('remember'))) {
+        $credentials = $this->only('login_id', 'password') + ['role' => $this->string('user_type')];
+
+        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -79,6 +82,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('login_id')).'|'.$this->ip());
     }
 }
