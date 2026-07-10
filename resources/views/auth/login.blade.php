@@ -40,9 +40,9 @@
                 <div>
                     <x-input-label for="user_type" :value="__('Pengguna')" />
                     <select id="user_type" name="user_type" class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-1 ring-slate-200 transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20">
-                        <option value="syarikat_pemilik">SYARIKAT/PEMILIK</option>
-                        <option value="pegawai_jkdm">PEGAWAI JKDM</option>
-                        <option value="lain">LAIN-LAIN</option>
+                        <option value="syarikat">SYARIKAT/PEMILIK</option>
+                        <option value="jkdm">PEGAWAI JKDM</option>
+                        <option value="admin">ADMIN</option>
                     </select>
                 </div>
 
