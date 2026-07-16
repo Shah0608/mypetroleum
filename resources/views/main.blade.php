@@ -48,13 +48,13 @@
                     </div>
 
                     <!-- Navigation Tabs (Blue buttons below logos) -->
-                    <div class="flex flex-wrap gap-1 text-xs justify-center">
-                        <a href="{{ url('/') }}" class="bg-sky-600 text-white px-3 py-2 font-medium hover:bg-sky-700">Utama</a>
-                        <a href="{{ url('/about') }}" class="bg-sky-600 text-white px-3 py-2 font-medium hover:bg-sky-700">Mengenal MyPetroleum</a>
-                        <a href="{{ url('/panduan-58a') }}" class="bg-sky-600 text-white px-3 py-2 font-medium hover:bg-sky-700">Panduan Butiran 58 A</a>
-                        <a href="{{ url('/contact') }}" class="bg-sky-600 text-white px-3 py-2 font-medium hover:bg-sky-700">Hubungi Kami</a>
-                        <a href="{{ url('/manual') }}" class="bg-sky-600 text-white px-3 py-2 font-medium hover:bg-sky-700">Manual Pengguna</a>
-                        <a href="{{ route('login') }}" class="bg-sky-600 text-white px-3 py-2 font-medium hover:bg-sky-700">Daftar Masuk MyPetroleum</a>
+                    <div class="flex flex-wrap gap-2 text-xs justify-center">
+                        <a href="{{ url('/') }}" class="rounded-full bg-sky-400 px-4 py-2 font-semibold text-slate-950 shadow-sm shadow-sky-200/50 transition hover:bg-sky-300">Utama</a>
+                        <a href="{{ url('/about') }}" class="rounded-full bg-sky-100 px-4 py-2 font-semibold text-sky-900 transition hover:bg-sky-300 hover:text-slate-950">Mengenal MyPetroleum</a>
+                        <a href="{{ url('/panduan-58a') }}" class="rounded-full bg-sky-100 px-4 py-2 font-semibold text-sky-900 transition hover:bg-sky-300 hover:text-slate-950">Panduan Butiran 58 A</a>
+                        <a href="{{ url('/contact') }}" class="rounded-full bg-sky-100 px-4 py-2 font-semibold text-sky-900 transition hover:bg-sky-300 hover:text-slate-950">Hubungi Kami</a>
+                        <a href="{{ url('/manual') }}" class="rounded-full bg-sky-100 px-4 py-2 font-semibold text-sky-900 transition hover:bg-sky-300 hover:text-slate-950">Manual Pengguna</a>
+                        <a href="{{ route('login') }}" class="rounded-full bg-sky-100 px-4 py-2 font-semibold text-sky-900 transition hover:bg-sky-300 hover:text-slate-950">Daftar Masuk MyPetroleum</a>
                     </div>
                 </div>
 

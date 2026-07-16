@@ -25,16 +25,21 @@
 </head>
 <body class="font-sans antialiased">
 <div class="min-h-screen bg-sky-700 text-slate-900">
-        <div class="border-b border-slate-800 bg-slate-900 text-white shadow-lg">
+        <div class="border-b border-black bg-black text-white shadow-lg" style="background-color: #000000;">
             <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-4">
                     <div class="text-2xl font-semibold tracking-tight">{{ $brandLabel }}</div>
 
-                    <nav class="hidden items-center gap-6 lg:flex">
+                    <nav class="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto whitespace-nowrap py-1 text-sm sm:gap-3 lg:gap-6">
                         @foreach ($navItems as $item)
+                            @php
+                                $isActive = isset($item['route'])
+                                    ? request()->routeIs($item['route'])
+                                    : request()->is(ltrim($item['active'], '/'));
+                            @endphp
                             <a
                                 href="{{ $item['url'] }}"
-                                class="{{ request()->is(ltrim($item['active'], '/')) ? 'text-white' : 'text-white/70 hover:text-white' }} text-sm font-semibold uppercase tracking-wide transition"
+                                class="{{ $isActive ? 'bg-sky-700 text-white shadow-md shadow-sky-900/20 ring-2 ring-white/70' : 'bg-sky-600 text-white shadow-md shadow-sky-900/20 hover:bg-sky-500' }} rounded-full px-3 py-2 font-semibold uppercase tracking-wide transition sm:px-4"
                             >
                                 {{ $item['label'] }}
                             </a>
@@ -44,7 +49,7 @@
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="rounded-md border border-white/70 px-4 py-2 text-sm font-medium text-white transition hover:bg-white hover:text-slate-900">
+                    <button type="submit" class="rounded-lg bg-rose-500 px-4 py-2.5 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-rose-950/30 transition hover:bg-rose-400 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2 focus:ring-offset-slate-900">
                         Log Keluar
                     </button>
                 </form>
@@ -70,13 +75,6 @@
                 </div>
             </section>
 
-            <section class="mt-4 grid gap-4 md:grid-cols-2">
-                @foreach ($navItems as $item)
-                    <a href="{{ $item['url'] }}" class="rounded-xl border border-slate-300 bg-sky-100 px-5 py-4 text-center text-[16px] font-medium text-sky-900 shadow-sm transition hover:bg-sky-200">
-                        {{ $item['label'] }}
-                    </a>
-                @endforeach
-            </section>
 
             <footer class="mt-6 bg-slate-900 py-4 text-center text-sm text-white/90">
                 Hakcipta Terpelihara © Jabatan Kastam Diraja Malaysia 2025
