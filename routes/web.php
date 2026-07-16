@@ -28,10 +28,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/syarikat/dashboard', [DashboardController::class, 'syarikat'])
         ->middleware('role:syarikat')->name('syarikat.dashboard');
     Route::view('/syarikat/utama', 'syarikat.utama')->middleware('role:syarikat')->name('syarikat.utama');
-    Route::view('/syarikat/permohonan-58a', 'syarikat.permohonan-58a')->middleware('role:syarikat')->name('syarikat.permohonan-58a');
+    Route::get('/syarikat/permohonan-58a', [App\Http\Controllers\Syarikat\Permohonan58AController::class, 'create'])
+        ->middleware('role:syarikat')->name('syarikat.permohonan-58a');
+    Route::post('/syarikat/permohonan-58a', [App\Http\Controllers\Syarikat\Permohonan58AController::class, 'store'])
+        ->middleware('role:syarikat')->name('syarikat.permohonan-58a.store');
     Route::view('/syarikat/laporan-cj', 'syarikat.laporan-cj')->middleware('role:syarikat')->name('syarikat.laporan-cj');
     Route::view('/syarikat/senarailaporan', 'syarikat.senarailaporan')->middleware('role:syarikat')->name('syarikat.senarailaporan');
-    Route::view('/syarikat/senaraipermohonan', 'syarikat.senaraipermohonan')->middleware('role:syarikat')->name('syarikat.senaraipermohonan');
+    Route::get('/syarikat/senaraipermohonan', [App\Http\Controllers\Syarikat\Permohonan58AController::class, 'index'])
+        ->middleware('role:syarikat')->name('syarikat.senaraipermohonan');
+    Route::get('/syarikat/permohonan-58a/{id}/attachment/{index}', [App\Http\Controllers\Syarikat\Permohonan58AController::class, 'downloadAttachment'])
+        ->middleware('role:syarikat')->name('syarikat.permohonan-58a.attachment');
 
     // Haluan Dashboard JKDM
     Route::get('/jkdm/dashboard', [DashboardController::class, 'jkdm'])
