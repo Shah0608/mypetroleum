@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Syarikat;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Permohonan58A;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class Permohonan58AController extends Controller
@@ -100,6 +100,7 @@ class Permohonan58AController extends Controller
         }
 
         $permohonan = Permohonan58A::create([
+            'user_id' => $request->user()->id,
             'nama' => $request->input('nama'),
             'no_telefon' => $request->input('no_telefon'),
             'email' => $request->input('email'),
@@ -127,20 +128,24 @@ class Permohonan58AController extends Controller
         return redirect()->route('syarikat.senaraipermohonan')->with('success', 'Permohonan berjaya disimpan.');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $permohonans = Permohonan58A::latest()->get();
+        $permohonans = Permohonan58A::where('user_id', $request->user()->id)->latest()->get();
+
         return view('syarikat.senaraipermohonan', compact('permohonans'));
     }
 
     public function downloadAttachment($id, $index = 0)
     {
         $perm = Permohonan58A::findOrFail($id);
+        abort_unless((int) $perm->user_id === auth()->id(), 403);
+
         $attachments = $perm->attachments ?? [];
-        if (!isset($attachments[$index])) {
+        if (! isset($attachments[$index])) {
             abort(404);
         }
         $path = $attachments[$index];
+
         return Storage::disk('public')->download($path);
     }
 }

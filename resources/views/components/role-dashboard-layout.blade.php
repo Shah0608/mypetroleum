@@ -26,30 +26,30 @@
 <body class="font-sans antialiased">
 <div class="min-h-screen bg-sky-700 text-slate-900">
         <div class="border-b border-black bg-black text-white shadow-lg" style="background-color: #000000;">
-            <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-6 px-4 py-4 sm:px-6 lg:px-8">
+            <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-4">
                     <div class="text-2xl font-semibold tracking-tight">{{ $brandLabel }}</div>
-
-                    <nav class="flex min-w-0 flex-1 items-center gap-2 overflow-x-auto whitespace-nowrap py-1 text-sm sm:gap-3 lg:gap-6">
-                        @foreach ($navItems as $item)
-                            @php
-                                $isActive = isset($item['route'])
-                                    ? request()->routeIs($item['route'])
-                                    : request()->is(ltrim($item['active'], '/'));
-                            @endphp
-                            <a
-                                href="{{ $item['url'] }}"
-                                class="{{ $isActive ? 'bg-sky-700 text-white shadow-md shadow-sky-900/20 ring-2 ring-white/70' : 'bg-sky-600 text-white shadow-md shadow-sky-900/20 hover:bg-sky-500' }} rounded-full px-3 py-2 font-semibold uppercase tracking-wide transition sm:px-4"
-                            >
-                                {{ $item['label'] }}
-                            </a>
-                        @endforeach
-                    </nav>
                 </div>
+
+                <nav class="flex flex-1 justify-center min-w-0 items-center gap-2 overflow-x-auto md:overflow-visible md:flex-wrap whitespace-nowrap md:whitespace-normal py-1 text-sm sm:gap-3 lg:gap-4">
+                    @foreach ($navItems as $item)
+                        @php
+                            $isActive = isset($item['route'])
+                                ? request()->routeIs($item['route'])
+                                : request()->is(ltrim($item['active'], '/'));
+                        @endphp
+                        <a
+                            href="{{ $item['url'] }}"
+                            class="{{ $isActive ? 'bg-sky-700 text-white shadow-md shadow-sky-900/20 ring-2 ring-white/70' : 'bg-sky-600 text-white shadow-md shadow-sky-900/20 hover:bg-sky-500' }} rounded-full px-2 py-1.5 font-semibold uppercase tracking-wide transition sm:px-3 sm:py-2"
+                        >
+                            {{ $item['label'] }}
+                        </a>
+                    @endforeach
+                </nav>
 
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <button type="submit" class="rounded-lg bg-rose-500 px-4 py-2.5 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-rose-950/30 transition hover:bg-rose-400 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2 focus:ring-offset-slate-900">
+                    <button type="submit" class="rounded-lg bg-rose-500 px-3 py-2 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-rose-950/30 transition hover:bg-rose-400 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-rose-300 focus:ring-offset-2 focus:ring-offset-slate-900">
                         Log Keluar
                     </button>
                 </form>

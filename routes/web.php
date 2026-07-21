@@ -1,7 +1,11 @@
 <?php
 
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\JkdmController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Syarikat\LaporanCjpController;
+use App\Http\Controllers\Syarikat\Permohonan58AController;
+use App\Models\LaporanCjp;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,37 +27,53 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/dashboard', function () {
+        return match (auth()->user()->role) {
+            'admin' => redirect()->route('admin.utama'),
+            'jkdm' => redirect()->route('jkdm.utama'),
+            default => redirect()->route('syarikat.utama'),
+        };
+    })->name('dashboard');
 
-    // Haluan Dashboard Syarikat
-    Route::get('/syarikat/dashboard', [DashboardController::class, 'syarikat'])
-        ->middleware('role:syarikat')->name('syarikat.dashboard');
+    // Haluan Syarikat
     Route::view('/syarikat/utama', 'syarikat.utama')->middleware('role:syarikat')->name('syarikat.utama');
-    Route::get('/syarikat/permohonan-58a', [App\Http\Controllers\Syarikat\Permohonan58AController::class, 'create'])
+    Route::get('/syarikat/permohonan-58a', [Permohonan58AController::class, 'create'])
         ->middleware('role:syarikat')->name('syarikat.permohonan-58a');
-    Route::post('/syarikat/permohonan-58a', [App\Http\Controllers\Syarikat\Permohonan58AController::class, 'store'])
+    Route::post('/syarikat/permohonan-58a', [Permohonan58AController::class, 'store'])
         ->middleware('role:syarikat')->name('syarikat.permohonan-58a.store');
     Route::view('/syarikat/laporan-cj', 'syarikat.laporan-cj')->middleware('role:syarikat')->name('syarikat.laporan-cj');
-    Route::view('/syarikat/senarailaporan', 'syarikat.senarailaporan')->middleware('role:syarikat')->name('syarikat.senarailaporan');
-    Route::get('/syarikat/senaraipermohonan', [App\Http\Controllers\Syarikat\Permohonan58AController::class, 'index'])
+    Route::post('/syarikat/laporan-cj', [LaporanCjpController::class, 'store'])->middleware('role:syarikat')->name('syarikat.laporan-cj.store');
+    Route::get('/syarikat/senarailaporan', function () {
+        return view('syarikat.senarailaporan', ['laporans' => LaporanCjp::where('user_id', auth()->id())->latest()->get()]);
+    })->middleware('role:syarikat')->name('syarikat.senarailaporan');
+    Route::get('/syarikat/senaraipermohonan', [Permohonan58AController::class, 'index'])
         ->middleware('role:syarikat')->name('syarikat.senaraipermohonan');
-    Route::get('/syarikat/permohonan-58a/{id}/attachment/{index}', [App\Http\Controllers\Syarikat\Permohonan58AController::class, 'downloadAttachment'])
+    Route::get('/syarikat/permohonan-58a/{id}/attachment/{index}', [Permohonan58AController::class, 'downloadAttachment'])
         ->middleware('role:syarikat')->name('syarikat.permohonan-58a.attachment');
 
-    // Haluan Dashboard JKDM
-    Route::get('/jkdm/dashboard', [DashboardController::class, 'jkdm'])
-        ->middleware('role:jkdm')->name('jkdm.dashboard');
+    // Haluan JKDM
     Route::view('/jkdm/utama', 'jkdm.utama')->middleware('role:jkdm')->name('jkdm.utama');
-    Route::view('/jkdm/senarailaporan', 'jkdm.senarailaporan')->middleware('role:jkdm')->name('jkdm.senarailaporan');
-    Route::view('/jkdm/senaraipermohonan', 'jkdm.senaraipermohonan')->middleware('role:jkdm')->name('jkdm.senaraipermohonan');
+    Route::get('/jkdm/senarailaporan', [JkdmController::class, 'reports'])->middleware('role:jkdm')->name('jkdm.senarailaporan');
+    Route::get('/jkdm/senarailaporan/export', [JkdmController::class, 'exportReports'])->middleware('role:jkdm')->name('jkdm.senarailaporan.export');
+    Route::get('/jkdm/senaraipermohonan', [JkdmController::class, 'applications'])->middleware('role:jkdm')->name('jkdm.senaraipermohonan');
+    Route::get('/jkdm/senaraipermohonan/{permohonan}/semak', [JkdmController::class, 'review'])->middleware('role:jkdm')->name('jkdm.permohonan.semak');
+    Route::put('/jkdm/senaraipermohonan/{permohonan}', [JkdmController::class, 'update'])->middleware('role:jkdm')->name('jkdm.permohonan.update');
 
-    // Haluan Dashboard Admin
-    Route::get('/admin/dashboard', [DashboardController::class, 'admin'])
-        ->middleware('role:admin')->name('admin.dashboard');
+    // Haluan Admin
     Route::view('/admin/utama', 'admin.utama')->middleware('role:admin')->name('admin.utama');
-    Route::view('/admin/uruspengguna', 'admin.uruspengguna')->middleware('role:admin')->name('admin.uruspengguna');
-    Route::view('/admin/tambahpengguna', 'admin.tambahpengguna')->middleware('role:admin')->name('admin.tambahpengguna');
-    Route::view('/admin/senarailaporan', 'admin.senarailaporan')->middleware('role:admin')->name('admin.senarailaporan');
-    Route::view('/admin/senaraipermohonan', 'admin.senaraipermohonan')->middleware('role:admin')->name('admin.senaraipermohonan');
+    Route::get('/admin/uruspengguna', [AdminController::class, 'users'])->middleware('role:admin')->name('admin.uruspengguna');
+    Route::get('/admin/tambahpengguna', [AdminController::class, 'createUser'])->middleware('role:admin')->name('admin.tambahpengguna');
+    Route::post('/admin/tambahpengguna', [AdminController::class, 'storeUser'])->middleware('role:admin')->name('admin.pengguna.store');
+    Route::get('/admin/pengguna/{user}/edit', [AdminController::class, 'editUser'])->middleware('role:admin')->name('admin.pengguna.edit');
+    Route::put('/admin/pengguna/{user}', [AdminController::class, 'updateUser'])->middleware('role:admin')->name('admin.pengguna.update');
+    Route::delete('/admin/pengguna/{user}', [AdminController::class, 'destroyUser'])->middleware('role:admin')->name('admin.pengguna.destroy');
+    Route::get('/admin/senarailaporan', [AdminController::class, 'reports'])->middleware('role:admin')->name('admin.senarailaporan');
+    Route::get('/admin/senarailaporan/export', [AdminController::class, 'exportReports'])->middleware('role:admin')->name('admin.senarailaporan.export');
+    Route::delete('/admin/senarailaporan/{laporan}', [AdminController::class, 'destroyReport'])->middleware('role:admin')->name('admin.laporan.destroy');
+    Route::get('/admin/senaraipermohonan', [AdminController::class, 'applications'])->middleware('role:admin')->name('admin.senaraipermohonan');
+    Route::get('/admin/senaraipermohonan/{permohonan}/semak', [AdminController::class, 'reviewApplication'])->middleware('role:admin')->name('admin.permohonan.semak');
+    Route::put('/admin/senaraipermohonan/{permohonan}', [AdminController::class, 'updateApplication'])->middleware('role:admin')->name('admin.permohonan.update');
+    Route::delete('/admin/senaraipermohonan/{permohonan}', [AdminController::class, 'destroyApplication'])->middleware('role:admin')->name('admin.permohonan.destroy');
 });
 
 require __DIR__.'/auth.php';

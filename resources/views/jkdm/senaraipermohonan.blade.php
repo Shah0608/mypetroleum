@@ -15,13 +15,9 @@
                 <h2 class="text-xl font-bold text-slate-900">
                     Senarai Permohonan: <span class="text-blue-600">Pengecualian Butiran 58A</span>
                 </h2>
-                <!-- Butang Muat Turun Excel di sebelah kanan atas seperti dalam gambar rajah -->
-                <button type="button" class="mt-2 sm:mt-0 inline-flex items-center rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700 shadow-sm">
-                    <svg class="mr-1.5 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                    </svg>
-                    Muat Turun Excel
-                </button>
+                <span class="mt-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 sm:mt-0">
+                    {{ $permohonans->count() }} rekod
+                </span>
             </div>
 
             <!-- Bar Carian Panjang (Format: Cari Nama Syarikat / Negeri/Kawasan/Status/No Sijil/Tarikh) -->
@@ -69,48 +65,43 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-200">
-                        @if(request('submitted') == 'true')
-                            <!-- Data dipaparkan selepas user Syarikat klik Hantar -->
+                        @forelse($permohonans as $permohonan)
                             <tr class="hover:bg-slate-50 transition-colors">
-                                <td class="border-r border-slate-200 p-3">15/07/2026</td>
-                                <td class="border-r border-slate-200 p-3">Melaka</td>
-                                <td class="border-r border-slate-200 p-3 font-semibold text-slate-900">Atifa Petroleum Sdn Bhd</td>
-                                <td class="border-r border-slate-200 p-3">Minyak Diesel / Petroleum bersiap</td>
-                                <td class="border-r border-slate-200 p-3 text-center">Litre</td>
-                                <td class="border-r border-slate-200 p-3 text-center">50,000</td>
-                                <td class="border-r border-slate-200 p-3">Tanjung Bruas</td>
-                                
-                                <!-- Status Lalai (Dalam Tindakan) seperti gambar rajah -->
+                                <td class="border-r border-slate-200 p-3">{{ $permohonan->tarikh_permohonan?->format('d/m/Y') ?? '-' }}</td>
+                                <td class="border-r border-slate-200 p-3">{{ $permohonan->negeri ?? '-' }}</td>
+                                <td class="border-r border-slate-200 p-3 font-semibold text-slate-900">{{ $permohonan->nama_syarikat ?? '-' }}</td>
+                                <td class="border-r border-slate-200 p-3">{{ collect($permohonan->barangs)->pluck('perihal')->filter()->join(', ') ?: '-' }}</td>
+                                <td class="border-r border-slate-200 p-3 text-center">{{ collect($permohonan->barangs)->pluck('unit')->filter()->join(', ') ?: '-' }}</td>
+                                <td class="border-r border-slate-200 p-3 text-center">{{ collect($permohonan->barangs)->pluck('kuantiti')->filter()->join(', ') ?: '-' }}</td>
+                                <td class="border-r border-slate-200 p-3">{{ collect($permohonan->barangs)->pluck('kawasan')->filter()->join(', ') ?: '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">
                                     <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-600/20">
-                                        Dalam tindakan
+                                        {{ $permohonan->status ?? 'Dalam tindakan' }}
                                     </span>
                                 </td>
-                                <!-- Ruangan kosong menunggu tindakan kelulusan pegawai Kastam -->
-                                <td class="border-r border-slate-200 p-3 bg-blue-50/30 font-mono text-xs text-slate-400 italic">- Belum dijana -</td>
-                                <td class="border-r border-slate-200 p-3 bg-blue-50/30 text-slate-400 italic">-</td>
-                                <td class="border-r border-slate-200 p-3 bg-blue-50/30 text-slate-400 italic">-</td>
+                                <td class="border-r border-slate-200 p-3 bg-blue-50/30 font-mono text-xs">{{ $permohonan->no_sijil_pengecualian ?? '-' }}</td>
+                                <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
+                                <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_tamat ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 text-center">
-                                    <button type="button" disabled class="inline-flex items-center rounded-md bg-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-500 cursor-not-allowed shadow-sm">
-                                        pdf
-                                    </button>
+                                    @if($permohonan->sijil_pengecualian_path)
+                                        <a href="{{ asset('storage/'.$permohonan->sijil_pengecualian_path) }}" target="_blank" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</a>
+                                    @else
+                                        -
+                                    @endif
                                 </td>
-                                
-                                <!-- Butang Semak Hijau di hujung untuk kegunaan JKDM -->
                                 <td class="p-3 text-center">
-                                    <button type="button" class="inline-flex items-center rounded-md bg-green-600 px-4 py-1.5 text-xs font-bold text-white shadow-md hover:bg-green-700 transition uppercase tracking-wider">
+                                    <a href="{{ route('jkdm.permohonan.semak', $permohonan) }}" class="inline-flex items-center rounded-md bg-green-600 px-4 py-1.5 text-xs font-bold text-white shadow-md hover:bg-green-700 transition uppercase tracking-wider">
                                         semak
-                                    </button>
+                                    </a>
                                 </td>
                             </tr>
-                        @else
-                            <!-- Jadual Kosong sekiranya tiada permohonan baharu dihantar -->
+                        @empty
                             <tr>
                                 <td colspan="13" class="p-8 text-center text-sm text-slate-400 italic">
                                     Tiada rekod permohonan baharu untuk disemak buat masa ini.
                                 </td>
                             </tr>
-                        @endif
+                        @endforelse
                     </tbody>
                 </table>
             </div>
