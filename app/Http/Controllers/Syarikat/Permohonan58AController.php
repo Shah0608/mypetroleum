@@ -29,7 +29,7 @@ class Permohonan58AController extends Controller
             'jawatan' => 'nullable|string|max:255',
             'nama_syarikat' => 'nullable|string|max:255',
             'no_pendaftaran_cukai' => 'nullable|string|max:255',
-            'tarikh_permohonan' => 'nullable|date_format:d/m/Y',
+            'tarikh_permohonan' => 'nullable|date',
             'no_kelulusan' => 'nullable|string|max:255',
             'no_pesanan_belian' => 'nullable|string|max:255',
             'alamat' => 'nullable|string',
@@ -90,15 +90,6 @@ class Permohonan58AController extends Controller
             }
         }
 
-        // convert date from d/m/Y to Y-m-d
-        $tarikh = null;
-        if ($request->filled('tarikh_permohonan')) {
-            $d = \DateTime::createFromFormat('d/m/Y', $request->input('tarikh_permohonan'));
-            if ($d) {
-                $tarikh = $d->format('Y-m-d');
-            }
-        }
-
         $permohonan = Permohonan58A::create([
             'user_id' => $request->user()->id,
             'nama' => $request->input('nama'),
@@ -108,7 +99,7 @@ class Permohonan58AController extends Controller
             'jawatan' => $request->input('jawatan'),
             'nama_syarikat' => $request->input('nama_syarikat'),
             'no_pendaftaran_cukai' => $request->input('no_pendaftaran_cukai'),
-            'tarikh_permohonan' => $tarikh,
+            'tarikh_permohonan' => $request->input('tarikh_permohonan'),
             'no_kelulusan' => $request->input('no_kelulusan'),
             'no_pesanan_belian' => $request->input('no_pesanan_belian'),
             'alamat' => $request->input('alamat'),
