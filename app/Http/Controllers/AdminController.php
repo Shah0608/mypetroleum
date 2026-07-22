@@ -80,6 +80,37 @@ class AdminController extends Controller
     public function updateApplication(Request $request, Permohonan58A $permohonan): RedirectResponse
     {
         $data = $request->validate([
+            'nama' => ['nullable', 'string', 'max:255'],
+            'no_telefon' => ['nullable', 'string', 'max:50'],
+            'email' => ['nullable', 'email', 'max:255'],
+            'no_kp' => ['nullable', 'string', 'max:50'],
+            'jawatan' => ['nullable', 'string', 'max:255'],
+            'nama_syarikat' => ['nullable', 'string', 'max:255'],
+            'no_pendaftaran_cukai' => ['nullable', 'string', 'max:255'],
+            'tarikh_permohonan' => ['nullable', 'date'],
+            'no_kelulusan' => ['nullable', 'string', 'max:255'],
+            'no_pesanan_belian' => ['nullable', 'string', 'max:255'],
+            'alamat' => ['nullable', 'string'],
+            'negeri' => ['nullable', 'string', 'max:255'],
+            'tandatangan_nama' => ['nullable', 'string', 'max:255'],
+            'tandatangan_no_kp' => ['nullable', 'string', 'max:50'],
+            'tandatangan_jawatan' => ['nullable', 'string', 'max:255'],
+            'pembekal_nama' => ['nullable', 'string', 'max:255'],
+            'pembekal_alamat' => ['nullable', 'string'],
+            'kod_tarif' => ['array'],
+            'kod_tarif.*' => ['nullable', 'string'],
+            'perihal_barang' => ['array'],
+            'perihal_barang.*' => ['nullable', 'string'],
+            'unit' => ['array'],
+            'unit.*' => ['nullable', 'string'],
+            'deskripsi' => ['array'],
+            'deskripsi.*' => ['nullable', 'string'],
+            'kuantiti' => ['array'],
+            'kuantiti.*' => ['nullable', 'numeric'],
+            'nilai' => ['array'],
+            'nilai.*' => ['nullable', 'numeric'],
+            'kawasan' => ['array'],
+            'kawasan.*' => ['nullable', 'string'],
             'status' => ['required', 'in:Dalam tindakan,Diluluskan,Tidak diluluskan'],
             'no_sijil_pengecualian' => ['nullable', 'string', 'max:100'],
             'tarikh_diluluskan' => ['nullable', 'date'],
@@ -90,10 +121,30 @@ class AdminController extends Controller
             'sijil_pengecualian' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
         ]);
 
+        $barangs = [];
+        foreach ($request->input('kod_tarif', []) as $index => $kodTarif) {
+            if (blank($kodTarif) && blank($request->input("perihal_barang.$index"))) {
+                continue;
+            }
+
+            $barangs[] = [
+                'kod_tarif' => $kodTarif,
+                'perihal' => $request->input("perihal_barang.$index"),
+                'unit' => $request->input("unit.$index"),
+                'deskripsi' => $request->input("deskripsi.$index"),
+                'kuantiti' => $request->input("kuantiti.$index"),
+                'nilai' => $request->input("nilai.$index"),
+                'kawasan' => $request->input("kawasan.$index"),
+            ];
+        }
+
+        $data['barangs'] = $barangs;
+
         if ($request->hasFile('sijil_pengecualian')) {
             $data['sijil_pengecualian_path'] = $request->file('sijil_pengecualian')->store('sijil-pengecualian', 'public');
         }
 
+        unset($data['kod_tarif'], $data['perihal_barang'], $data['unit'], $data['deskripsi'], $data['kuantiti'], $data['nilai'], $data['kawasan']);
         unset($data['sijil_pengecualian']);
         $permohonan->update($data);
 

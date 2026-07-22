@@ -38,7 +38,7 @@
                             <td class="px-4 py-3">{{ $permohonan->tarikh_permohonan?->format('d/m/Y') ?? '-' }}</td>
                             <td class="px-4 py-3 font-semibold text-slate-900">{{ $permohonan->nama_syarikat ?? '-' }}</td>
                             <td class="px-4 py-3">{{ $permohonan->negeri ?? '-' }}</td>
-                            <td class="px-4 py-3">{{ $permohonan->status ?? 'Dalam tindakan' }}</td>
+                            <td class="px-4 py-3">@include('partials.status-permohonan-badge', ['status' => $permohonan->status])</td>
                             <td class="px-4 py-3">{{ $permohonan->no_sijil_pengecualian ?? '-' }}</td>
                             <td class="px-4 py-3">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
                             <td class="px-4 py-3">{{ $permohonan->tarikh_tamat ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_tamat)->format('d/m/Y') : '-' }}</td>

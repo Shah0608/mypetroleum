@@ -17,42 +17,7 @@
 
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-950/10">
             <h2 class="mb-4 border-b border-slate-100 pb-3 text-xl font-bold text-slate-900">Maklumat Permohonan</h2>
-            <div class="grid gap-4 text-sm md:grid-cols-2">
-                <div><span class="font-semibold">Nama Syarikat:</span> {{ $permohonan->nama_syarikat ?? '-' }}</div>
-                <div><span class="font-semibold">Negeri:</span> {{ $permohonan->negeri ?? '-' }}</div>
-                <div><span class="font-semibold">Pemohon:</span> {{ $permohonan->nama ?? '-' }}</div>
-                <div><span class="font-semibold">Tarikh Permohonan:</span> {{ $permohonan->tarikh_permohonan?->format('d/m/Y') ?? '-' }}</div>
-                <div class="md:col-span-2"><span class="font-semibold">Alamat:</span> {{ $permohonan->alamat ?? '-' }}</div>
-            </div>
-
-            <div class="mt-5 overflow-x-auto rounded-xl border border-slate-200">
-                <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 text-left text-slate-700">
-                        <tr>
-                            <th class="px-3 py-2">Kod Tarif</th>
-                            <th class="px-3 py-2">Perihal</th>
-                            <th class="px-3 py-2">Unit</th>
-                            <th class="px-3 py-2">Kuantiti</th>
-                            <th class="px-3 py-2">Nilai</th>
-                            <th class="px-3 py-2">Kawasan</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse(($permohonan->barangs ?? []) as $barang)
-                            <tr>
-                                <td class="px-3 py-2">{{ $barang['kod_tarif'] ?? '-' }}</td>
-                                <td class="px-3 py-2">{{ $barang['perihal'] ?? '-' }}</td>
-                                <td class="px-3 py-2">{{ $barang['unit'] ?? '-' }}</td>
-                                <td class="px-3 py-2">{{ $barang['kuantiti'] ?? '-' }}</td>
-                                <td class="px-3 py-2">{{ $barang['nilai'] ?? '-' }}</td>
-                                <td class="px-3 py-2">{{ $barang['kawasan'] ?? '-' }}</td>
-                            </tr>
-                        @empty
-                            <tr><td colspan="6" class="px-3 py-4 text-center text-slate-500">Tiada barangan direkodkan.</td></tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
+            @include('partials.permohonan-58a-readonly', ['permohonan' => $permohonan])
         </div>
 
         <form action="{{ route('jkdm.permohonan.update', $permohonan) }}" method="POST" enctype="multipart/form-data" class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-950/10">

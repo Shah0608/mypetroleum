@@ -94,7 +94,7 @@
                                                 -
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3">{{ $p->status ?? 'Dalam tindakan' }}</td>
+                                        <td class="px-4 py-3">@include('partials.status-permohonan-badge', ['status' => $p->status])</td>
                                         <td class="px-4 py-3">{{ $p->no_sijil_pengecualian ?? '-' }}</td>
                                         <td class="px-4 py-3">{{ $p->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($p->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
                                         <td class="px-4 py-3">{{ $p->tarikh_tamat ? \Illuminate\Support\Carbon::parse($p->tarikh_tamat)->format('d/m/Y') : '-' }}</td>

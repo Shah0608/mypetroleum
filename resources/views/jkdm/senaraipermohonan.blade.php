@@ -75,9 +75,7 @@
                                 <td class="border-r border-slate-200 p-3 text-center">{{ collect($permohonan->barangs)->pluck('kuantiti')->filter()->join(', ') ?: '-' }}</td>
                                 <td class="border-r border-slate-200 p-3">{{ collect($permohonan->barangs)->pluck('kawasan')->filter()->join(', ') ?: '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">
-                                    <span class="inline-flex items-center rounded-full bg-amber-50 px-2.5 py-1 text-xs font-semibold text-amber-800 ring-1 ring-inset ring-amber-600/20">
-                                        {{ $permohonan->status ?? 'Dalam tindakan' }}
-                                    </span>
+                                    @include('partials.status-permohonan-badge', ['status' => $permohonan->status])
                                 </td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 font-mono text-xs">{{ $permohonan->no_sijil_pengecualian ?? '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
