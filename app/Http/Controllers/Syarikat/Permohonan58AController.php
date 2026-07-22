@@ -130,7 +130,27 @@ class Permohonan58AController extends Controller
 
     public function index(Request $request)
     {
-        $permohonans = Permohonan58A::where('user_id', $request->user()->id)->latest()->get();
+        $query = trim((string) $request->query('q', ''));
+
+        $permohonans = Permohonan58A::where('user_id', $request->user()->id)
+            ->when($query !== '', function ($builder) use ($query) {
+                $builder->where(function ($search) use ($query) {
+                    $search->where('nama_syarikat', 'like', '%'.$query.'%')
+                        ->orWhere('negeri', 'like', '%'.$query.'%')
+                        ->orWhere('status', 'like', '%'.$query.'%')
+                        ->orWhere('no_sijil_pengecualian', 'like', '%'.$query.'%');
+
+                    if (preg_match('/^\d{4}$/', $query) === 1) {
+                        $search->orWhereYear('tarikh_permohonan', (int) $query);
+                    }
+
+                    if (preg_match('/^(0?[1-9]|1[0-2])$/', $query) === 1) {
+                        $search->orWhereMonth('tarikh_permohonan', (int) $query);
+                    }
+                });
+            })
+            ->latest()
+            ->get();
 
         return view('syarikat.senaraipermohonan', compact('permohonans'));
     }

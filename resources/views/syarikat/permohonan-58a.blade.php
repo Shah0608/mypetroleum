@@ -53,7 +53,7 @@
                         </div>
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-slate-700">Tarikh permohonan (dd/mm/yyyy)</label>
-                            <input type="text" name="tarikh_permohonan" placeholder="dd/mm/yyyy" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none" />
+                            <input type="date" name="tarikh_permohonan" lang="ms-MY" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none" />
                         </div>
                         <div class="space-y-2">
                             <label class="text-sm font-medium text-slate-700">No. Kelulusan (PDA2, JKDM dll)</label>
