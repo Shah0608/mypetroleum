@@ -51,6 +51,19 @@
                         {{ __('Log Masuk') }}
                     </x-primary-button>
                 </div>
+
+                @php
+                    $returnUrl = url()->previous();
+                    if (blank($returnUrl) || $returnUrl === route('login')) {
+                        $returnUrl = url('/');
+                    }
+                @endphp
+
+                <div>
+                    <a href="{{ $returnUrl }}" class="flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
+                        Return
+                    </a>
+                </div>
             </form>
         </div>
 
