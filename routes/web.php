@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Syarikat\LaporanCjpController;
 use App\Http\Controllers\Syarikat\Permohonan58AController;
 use App\Models\LaporanCjp;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -43,8 +44,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:syarikat')->name('syarikat.permohonan-58a.store');
     Route::view('/syarikat/laporan-cj', 'syarikat.laporan-cj')->middleware('role:syarikat')->name('syarikat.laporan-cj');
     Route::post('/syarikat/laporan-cj', [LaporanCjpController::class, 'store'])->middleware('role:syarikat')->name('syarikat.laporan-cj.store');
-    Route::get('/syarikat/senarailaporan', function () {
-        return view('syarikat.senarailaporan', ['laporans' => LaporanCjp::where('user_id', auth()->id())->latest()->get()]);
+    Route::get('/syarikat/senarailaporan', function (Request $request) {
+        $query = trim((string) $request->query('q', ''));
+
+        $laporans = LaporanCjp::query()
+            ->where('user_id', $request->user()->id)
+            ->when($query !== '', function ($builder) use ($query): void {
+                $builder->where(function ($search) use ($query): void {
+                    $search->where('negeri', 'like', '%'.$query.'%')
+                        ->orWhere('nama_syarikat', 'like', '%'.$query.'%')
+                        ->orWhere('bulan', 'like', '%'.$query.'%');
+
+                    if (preg_match('/^\d{4}$/', $query) === 1) {
+                        $search->orWhere('tahun', (int) $query);
+                    }
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('syarikat.senarailaporan', compact('laporans', 'query'));
     })->middleware('role:syarikat')->name('syarikat.senarailaporan');
     Route::get('/syarikat/senaraipermohonan', [Permohonan58AController::class, 'index'])
         ->middleware('role:syarikat')->name('syarikat.senaraipermohonan');

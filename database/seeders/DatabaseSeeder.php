@@ -39,5 +39,10 @@ class DatabaseSeeder extends Seeder
                 $user + ['password' => 'kastam']
             );
         }
+
+        $this->call([
+            Permohonan58ASeeder::class,
+            LaporanCjpSeeder::class,
+        ]);
     }
 }

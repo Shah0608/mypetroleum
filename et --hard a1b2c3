@@ -1,0 +1,12 @@
+[33m0fbaff3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: reset: moving to origin/main
+[33m0fbaff3[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{1}: pull origin main: Fast-forward
+[33m082729e[m HEAD@{2}: reset: moving to origin/main
+[33m2721950[m HEAD@{3}: pull origin main: Fast-forward
+[33m6b91589[m HEAD@{4}: commit: update(most design on syarikat siap tinggal function&surat kt JKDM pon siap tinggal function)
+[33md29723f[m HEAD@{5}: pull origin main: Fast-forward
+[33m15ae354[m HEAD@{6}: reset: moving to origin/main
+[33md70ea3d[m HEAD@{7}: commit: update
+[33m4eaaf19[m HEAD@{8}: commit: Fix vite manifest issue and update layout
+[33m578d872[m HEAD@{9}: Branch: renamed refs/heads/main to refs/heads/main
+[33m578d872[m HEAD@{11}: commit: First commit mypetroleum
+[33m793bd7e[m HEAD@{12}: clone: from https://github.com/Shah0608/mypetroleum.git

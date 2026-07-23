@@ -14,7 +14,20 @@ class AdminController extends Controller
 {
     public function users(): mixed
     {
-        return view('admin.uruspengguna', ['users' => User::latest()->get()]);
+        $query = trim((string) request()->query('q', ''));
+
+        $users = User::query()
+            ->when($query !== '', function ($builder) use ($query): void {
+                $builder->where(function ($search) use ($query): void {
+                    $search->where('name', 'like', '%'.$query.'%')
+                        ->orWhere('login_id', 'like', '%'.$query.'%')
+                        ->orWhere('role', 'like', '%'.$query.'%');
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('admin.uruspengguna', compact('users', 'query'));
     }
 
     public function createUser(): mixed
@@ -69,7 +82,35 @@ class AdminController extends Controller
 
     public function applications(): mixed
     {
-        return view('admin.senaraipermohonan', ['permohonans' => Permohonan58A::with('user')->latest()->get()]);
+        $query = trim((string) request()->query('q', ''));
+
+        $permohonans = Permohonan58A::with('user')
+            ->when($query !== '', function ($builder) use ($query): void {
+                $builder->where(function ($search) use ($query): void {
+                    $search->where('nama_syarikat', 'like', '%'.$query.'%')
+                        ->orWhere('negeri', 'like', '%'.$query.'%')
+                        ->orWhere('status', 'like', '%'.$query.'%')
+                        ->orWhere('no_sijil_pengecualian', 'like', '%'.$query.'%')
+                        ->orWhere('no_pesanan_belian', 'like', '%'.$query.'%')
+                        ->orWhereHas('user', function ($userQuery) use ($query): void {
+                            $userQuery->where('login_id', 'like', '%'.$query.'%');
+                        });
+
+                    if (preg_match('/^\d{4}$/', $query) === 1) {
+                        $search->orWhereYear('tarikh_permohonan', (int) $query)
+                            ->orWhereYear('tarikh_diluluskan', (int) $query);
+                    }
+
+                    if (preg_match('/^(0?[1-9]|1[0-2])$/', $query) === 1) {
+                        $search->orWhereMonth('tarikh_permohonan', (int) $query)
+                            ->orWhereMonth('tarikh_diluluskan', (int) $query);
+                    }
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('admin.senaraipermohonan', compact('permohonans', 'query'));
     }
 
     public function reviewApplication(Permohonan58A $permohonan): mixed
@@ -153,7 +194,27 @@ class AdminController extends Controller
 
     public function reports(): mixed
     {
-        return view('admin.senarailaporan', ['laporans' => LaporanCjp::with('user')->latest()->get()]);
+        $query = trim((string) request()->query('q', ''));
+
+        $laporans = LaporanCjp::with('user')
+            ->when($query !== '', function ($builder) use ($query): void {
+                $builder->where(function ($search) use ($query): void {
+                    $search->where('negeri', 'like', '%'.$query.'%')
+                        ->orWhere('nama_syarikat', 'like', '%'.$query.'%')
+                        ->orWhere('bulan', 'like', '%'.$query.'%')
+                        ->orWhereHas('user', function ($userQuery) use ($query): void {
+                            $userQuery->where('login_id', 'like', '%'.$query.'%');
+                        });
+
+                    if (preg_match('/^\d{4}$/', $query) === 1) {
+                        $search->orWhere('tahun', (int) $query);
+                    }
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('admin.senarailaporan', compact('laporans', 'query'));
     }
 
     public function exportReports(): StreamedResponse

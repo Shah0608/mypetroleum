@@ -66,7 +66,27 @@ class JkdmController extends Controller
 
     public function reports(): mixed
     {
-        return view('jkdm.senarailaporan', ['laporans' => LaporanCjp::with('user')->latest()->get()]);
+        $query = trim((string) request()->query('q', ''));
+
+        $laporans = LaporanCjp::with('user')
+            ->when($query !== '', function ($builder) use ($query): void {
+                $builder->where(function ($search) use ($query): void {
+                    $search->where('negeri', 'like', '%'.$query.'%')
+                        ->orWhere('nama_syarikat', 'like', '%'.$query.'%')
+                        ->orWhere('bulan', 'like', '%'.$query.'%')
+                        ->orWhereHas('user', function ($userQuery) use ($query): void {
+                            $userQuery->where('login_id', 'like', '%'.$query.'%');
+                        });
+
+                    if (preg_match('/^\d{4}$/', $query) === 1) {
+                        $search->orWhere('tahun', (int) $query);
+                    }
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('jkdm.senarailaporan', compact('laporans', 'query'));
     }
 
     public function exportReports(): StreamedResponse

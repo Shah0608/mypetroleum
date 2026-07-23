@@ -60,7 +60,7 @@
             <section class="rounded-3xl bg-sky-700 px-3 py-3 text-white">
                 <div class="flex items-start gap-4 sm:gap-6">
                     <img src="{{ asset('images/kastam-diraja-malaysia-seeklogo.png') }}" alt="Logo Kastam Diraja Malaysia" class="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-20" />
-                    <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="Logo MyPetroleum" class="h-20 w-20 shrink-0 object-contain sm:h-24 sm:w-24" />
+                    <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="Logo MyPetroleum" class="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-40" />
 
                     <div class="pt-2">
                         <h1 class="text-2xl font-bold leading-tight text-white drop-shadow sm:text-3xl">Sistem MyPetroleum {{ strtoupper($role) }}</h1>
@@ -83,3 +83,4 @@
     </div>
 </body>
 </html>
+

@@ -16,6 +16,26 @@
             <a href="{{ route('admin.tambahpengguna') }}" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-emerald-700">Tambah Pengguna</a>
         </div>
 
+        <form method="GET" action="{{ route('admin.uruspengguna') }}" class="mb-6 max-w-4xl">
+            <div class="flex items-center overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm">
+                <span class="whitespace-nowrap border-r border-slate-300 bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-600">
+                    Cari Nama /
+                </span>
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ $query ?? request('q') }}"
+                    placeholder="Nama / Login ID / Role"
+                    class="w-full px-4 py-2.5 text-sm focus:outline-none"
+                />
+                <button type="submit" class="flex items-center pr-3 text-slate-400" aria-label="Cari">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </div>
+        </form>
+
         @if (session('success'))
             <div class="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-800">{{ session('success') }}</div>
         @endif
