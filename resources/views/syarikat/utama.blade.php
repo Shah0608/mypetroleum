@@ -21,7 +21,7 @@
 
         <div class="grid gap-4 md:grid-cols-2">
             <div class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900">
-                Jumlah Permohonan: 1
+                Jumlah Permohonan: {{ $jumlahPermohonan ?? 0 }}
             </div>
             <div class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900">
                 Jumlah Penyata Bunkering-01: 1

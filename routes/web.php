@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Syarikat\LaporanCjpController;
 use App\Http\Controllers\Syarikat\Permohonan58AController;
 use App\Models\LaporanCjp;
+use App\Models\Permohonan58A;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -37,7 +38,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     // Haluan Syarikat
-    Route::view('/syarikat/utama', 'syarikat.utama')->middleware('role:syarikat')->name('syarikat.utama');
+    Route::get('/syarikat/utama', function () {
+        return view('syarikat.utama', [
+            'jumlahPermohonan' => Permohonan58A::query()
+                ->where('user_id', auth()->id())
+                ->count(),
+        ]);
+    })->middleware('role:syarikat')->name('syarikat.utama');
     Route::get('/syarikat/permohonan-58a', [Permohonan58AController::class, 'create'])
         ->middleware('role:syarikat')->name('syarikat.permohonan-58a');
     Route::post('/syarikat/permohonan-58a', [Permohonan58AController::class, 'store'])
@@ -71,7 +78,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('role:syarikat')->name('syarikat.permohonan-58a.attachment');
 
     // Haluan JKDM
-    Route::view('/jkdm/utama', 'jkdm.utama')->middleware('role:jkdm')->name('jkdm.utama');
+    Route::get('/jkdm/utama', function () {
+        return view('jkdm.utama', [
+            'jumlahPermohonan' => Permohonan58A::query()->count(),
+        ]);
+    })->middleware('role:jkdm')->name('jkdm.utama');
     Route::get('/jkdm/senarailaporan', [JkdmController::class, 'reports'])->middleware('role:jkdm')->name('jkdm.senarailaporan');
     Route::get('/jkdm/senarailaporan/export', [JkdmController::class, 'exportReports'])->middleware('role:jkdm')->name('jkdm.senarailaporan.export');
     Route::get('/jkdm/senaraipermohonan', [JkdmController::class, 'applications'])->middleware('role:jkdm')->name('jkdm.senaraipermohonan');
@@ -79,7 +90,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/jkdm/senaraipermohonan/{permohonan}', [JkdmController::class, 'update'])->middleware('role:jkdm')->name('jkdm.permohonan.update');
 
     // Haluan Admin
-    Route::view('/admin/utama', 'admin.utama')->middleware('role:admin')->name('admin.utama');
+    Route::get('/admin/utama', function () {
+        return view('admin.utama', [
+            'jumlahPermohonan' => Permohonan58A::query()->count(),
+        ]);
+    })->middleware('role:admin')->name('admin.utama');
     Route::get('/admin/uruspengguna', [AdminController::class, 'users'])->middleware('role:admin')->name('admin.uruspengguna');
     Route::get('/admin/tambahpengguna', [AdminController::class, 'createUser'])->middleware('role:admin')->name('admin.tambahpengguna');
     Route::post('/admin/tambahpengguna', [AdminController::class, 'storeUser'])->middleware('role:admin')->name('admin.pengguna.store');

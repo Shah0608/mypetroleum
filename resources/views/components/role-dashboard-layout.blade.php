@@ -8,6 +8,10 @@
 
 @php
     $brandLabel = trim($brand . ' ' . strtoupper($role));
+    $currentUser = auth()->user();
+    $displayName = $currentUser?->name ?: $currentUser?->login_id ?: 'Pengguna';
+    $roleLabel = strtoupper($currentUser?->role ?: $role);
+    $showBrandLabel = ! in_array($role, ['syarikat', 'admin', 'jkdm'], true);
 @endphp
 
 <!DOCTYPE html>
@@ -28,10 +32,12 @@
         <div class="border-b border-black bg-black text-white shadow-lg" style="background-color: #000000;">
             <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-4">
-                    <div class="text-2xl font-semibold tracking-tight">{{ $brandLabel }}</div>
+                    @if ($showBrandLabel)
+                        <div class="text-2xl font-semibold tracking-tight">{{ $brandLabel }}</div>
+                    @endif
                 </div>
 
-                <nav class="flex flex-1 justify-center min-w-0 items-center gap-2 overflow-x-auto md:overflow-visible md:flex-wrap whitespace-nowrap md:whitespace-normal py-1 text-sm sm:gap-3 lg:gap-4">
+                <nav class="flex flex-1 min-w-0 items-center justify-center gap-2 overflow-x-auto whitespace-nowrap py-1 text-sm sm:gap-3 lg:gap-4">
                     @foreach ($navItems as $item)
                         @php
                             $isActive = isset($item['route'])
@@ -62,9 +68,28 @@
                     <img src="{{ asset('images/kastam-diraja-malaysia-seeklogo.png') }}" alt="Logo Kastam Diraja Malaysia" class="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-20" />
                     <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="Logo MyPetroleum" class="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-40" />
 
-                    <div class="pt-2">
-                        <h1 class="text-2xl font-bold leading-tight text-white drop-shadow sm:text-3xl">Sistem MyPetroleum {{ strtoupper($role) }}</h1>
-                        <p class="mt-1 text-lg italic text-sky-100">{{ $subtitle ?: 'Sistem Maklumat Bunker Petroleum' }}</p>
+                    <div class="flex flex-1 items-start justify-between gap-6 pt-2">
+                        <div>
+                            <h1 class="text-5xl font-bold leading-tight text-white drop-shadow sm:text-6xl">Sistem MyPetroleum </h1>
+                            <p class="mt-1 text-lg italic text-sky-100">{{ $subtitle ?: 'Sistem Maklumat Bunker Petroleum' }}</p>
+                        </div>
+
+                        <div class="w-full max-w-sm rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-white shadow-lg shadow-slate-950/15 backdrop-blur-sm sm:w-fit">
+                            <div class="space-y-1 text-right">
+                                <div class="text-sm font-semibold tracking-wide text-sky-50">
+                                    Pengguna:
+                                </div>
+                                <div class="text-base font-semibold sm:text-lg">
+                                    {{ $displayName }}
+                                </div>
+                                <div class="text-sm font-semibold  tracking-wide text-sky-50">
+                                    Level:
+                                </div>
+                                <div class="text-sm font-semibold  tracking-wide text-sky-50">
+                                    {{ $roleLabel }}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -83,4 +108,3 @@
     </div>
 </body>
 </html>
-

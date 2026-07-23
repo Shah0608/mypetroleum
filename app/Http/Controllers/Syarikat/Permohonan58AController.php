@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Syarikat;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePermohonan58ARequest;
 use App\Models\Permohonan58A;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -19,47 +20,9 @@ class Permohonan58AController extends Controller
         return view('syarikat.permohonan-58a');
     }
 
-    public function store(Request $request)
+    public function store(StorePermohonan58ARequest $request)
     {
-        $data = $request->validate([
-            'nama' => 'nullable|string|max:255',
-            'no_telefon' => 'nullable|string|max:50',
-            'email' => 'nullable|email|max:255',
-            'no_kp' => 'nullable|string|max:50',
-            'jawatan' => 'nullable|string|max:255',
-            'nama_syarikat' => 'nullable|string|max:255',
-            'no_pendaftaran_cukai' => 'nullable|string|max:255',
-            'tarikh_permohonan' => 'nullable|date',
-            'no_kelulusan' => 'nullable|string|max:255',
-            'no_pesanan_belian' => 'nullable|string|max:255',
-            'alamat' => 'nullable|string',
-            'negeri' => 'nullable|string|max:255',
-
-            'tandatangan_nama' => 'nullable|string|max:255',
-            'tandatangan_no_kp' => 'nullable|string|max:50',
-            'tandatangan_jawatan' => 'nullable|string|max:255',
-
-            'pembekal_nama' => 'nullable|string|max:255',
-            'pembekal_alamat' => 'nullable|string',
-
-            // items arrays are optional
-            'kod_tarif' => 'array',
-            'kod_tarif.*' => 'nullable|string',
-            'perihal_barang' => 'array',
-            'perihal_barang.*' => 'nullable|string',
-            'unit' => 'array',
-            'unit.*' => 'nullable|string',
-            'deskripsi' => 'array',
-            'deskripsi.*' => 'nullable|string',
-            'kuantiti' => 'array',
-            'kuantiti.*' => 'nullable|numeric',
-            'nilai' => 'array',
-            'nilai.*' => 'nullable|numeric',
-            'kawasan' => 'array',
-            'kawasan.*' => 'nullable|string',
-
-            'attachments.*' => 'nullable|file|max:5120',
-        ]);
+        $data = $request->validated();
 
         // build items
         $barangs = [];
