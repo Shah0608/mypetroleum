@@ -31,6 +31,11 @@ class DatabaseSeeder extends Seeder
                 'login_id' => '731215055544',
                 'role' => 'admin',
             ],
+            [
+                'name' => 'Pelulus',
+                'login_id' => '731215055544',
+                'role' => 'pelulus',
+            ],
         ];
 
         foreach ($users as $user) {

@@ -32,6 +32,7 @@ class AuthenticatedSessionController extends Controller
         $redirectTo = match ($user->role) {
             'admin' => route('admin.utama'),
             'jkdm' => route('jkdm.utama'),
+            'pelulus' => route('pelulus.utama'),
             default => route('syarikat.utama'),
         };
 

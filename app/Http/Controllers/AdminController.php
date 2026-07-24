@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\LaporanCjp;
 use App\Models\Permohonan58A;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
@@ -40,7 +42,7 @@ class AdminController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'login_id' => ['required', 'string', 'max:255', 'unique:users,login_id'],
-            'role' => ['required', 'in:syarikat,jkdm,admin'],
+            'role' => ['required', 'in:syarikat,jkdm,admin,pelulus'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
         $data['password'] = Hash::make($data['password']);
@@ -59,7 +61,7 @@ class AdminController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'login_id' => ['required', 'string', 'max:255', 'unique:users,login_id,'.$user->id],
-            'role' => ['required', 'in:syarikat,jkdm,admin'],
+            'role' => ['required', 'in:syarikat,jkdm,admin,pelulus'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
         if (blank($data['password'] ?? null)) {
@@ -152,14 +154,10 @@ class AdminController extends Controller
             'nilai.*' => ['nullable', 'numeric'],
             'kawasan' => ['array'],
             'kawasan.*' => ['nullable', 'string'],
-            'status' => ['required', 'in:Dalam tindakan,Diluluskan,Tidak diluluskan'],
-            'no_sijil_pengecualian' => ['nullable', 'string', 'max:100'],
-            'tarikh_diluluskan' => ['nullable', 'date'],
-            'tarikh_tamat' => ['nullable', 'date', 'after_or_equal:tarikh_diluluskan'],
             'ulasan_jkdm' => ['nullable', 'string', 'max:5000'],
             'nama_pegawai_jkdm' => ['nullable', 'string', 'max:255'],
             'tarikh_ulasan_jkdm' => ['nullable', 'date'],
-            'sijil_pengecualian' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'tarikh_tamat_cga' => ['nullable', 'date'],
         ]);
 
         $barangs = [];
@@ -181,15 +179,17 @@ class AdminController extends Controller
 
         $data['barangs'] = $barangs;
 
-        if ($request->hasFile('sijil_pengecualian')) {
-            $data['sijil_pengecualian_path'] = $request->file('sijil_pengecualian')->store('sijil-pengecualian', 'public');
-        }
-
         unset($data['kod_tarif'], $data['perihal_barang'], $data['unit'], $data['deskripsi'], $data['kuantiti'], $data['nilai'], $data['kawasan']);
-        unset($data['sijil_pengecualian']);
         $permohonan->update($data);
 
         return to_route('admin.senaraipermohonan')->with('success', 'Semakan berjaya disimpan.');
+    }
+
+    public function printApplication(Permohonan58A $permohonan): Response
+    {
+        return Pdf::loadView('pdf.permohonan-58a', compact('permohonan'))
+            ->setPaper('a4')
+            ->download('permohonan-58a-'.$permohonan->id.'.pdf');
     }
 
     public function reports(): mixed

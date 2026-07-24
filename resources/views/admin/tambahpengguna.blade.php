@@ -40,7 +40,7 @@
             <label class="block">
                 <span class="text-sm font-semibold text-slate-700">Role</span>
                 <select name="role" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none" required>
-                    @foreach(['syarikat' => 'Syarikat', 'jkdm' => 'JKDM', 'admin' => 'Admin'] as $value => $label)
+                    @foreach(['syarikat' => 'Syarikat', 'jkdm' => 'JKDM', 'pelulus' => 'Pelulus', 'admin' => 'Admin'] as $value => $label)
                         <option value="{{ $value }}" @selected(old('role', $user->role ?? '') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\LaporanCjp;
 use App\Models\Permohonan58A;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class JkdmController extends Controller
@@ -45,23 +47,22 @@ class JkdmController extends Controller
     public function update(Request $request, Permohonan58A $permohonan): RedirectResponse
     {
         $data = $request->validate([
-            'status' => ['required', 'in:Dalam tindakan,Diluluskan,Tidak diluluskan'],
-            'no_sijil_pengecualian' => ['nullable', 'string', 'max:100'],
-            'tarikh_diluluskan' => ['nullable', 'date'],
-            'tarikh_tamat' => ['nullable', 'date', 'after_or_equal:tarikh_diluluskan'],
             'ulasan_jkdm' => ['nullable', 'string', 'max:5000'],
             'nama_pegawai_jkdm' => ['nullable', 'string', 'max:255'],
             'tarikh_ulasan_jkdm' => ['nullable', 'date'],
-            'sijil_pengecualian' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
+            'tarikh_tamat_cga' => ['nullable', 'date'],
         ]);
 
-        if ($request->hasFile('sijil_pengecualian')) {
-            $data['sijil_pengecualian_path'] = $request->file('sijil_pengecualian')->store('sijil-pengecualian', 'public');
-        }
-        unset($data['sijil_pengecualian']);
         $permohonan->update($data);
 
         return to_route('jkdm.senaraipermohonan')->with('success', 'Semakan berjaya disimpan.');
+    }
+
+    public function printApplication(Permohonan58A $permohonan): Response
+    {
+        return Pdf::loadView('pdf.permohonan-58a', compact('permohonan'))
+            ->setPaper('a4')
+            ->download('permohonan-58a-'.$permohonan->id.'.pdf');
     }
 
     public function reports(): mixed

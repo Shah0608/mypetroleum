@@ -185,51 +185,29 @@
                     <textarea name="ulasan_jkdm" rows="4" class="mt-1 w-full rounded-lg border border-blue-400 px-3 py-2 focus:border-blue-600 focus:outline-none">{{ old('ulasan_jkdm', $permohonan->ulasan_jkdm) }}</textarea>
                 </label>
 
-                <div class="grid gap-4 md:grid-cols-2">
+                <div class="grid gap-4 md:grid-cols-3">
                     <label class="block">
                         <span class="text-sm font-semibold text-slate-700">Nama Pegawai</span>
                         <input type="text" name="nama_pegawai_jkdm" value="{{ old('nama_pegawai_jkdm', $permohonan->nama_pegawai_jkdm) }}" class="mt-1 w-full rounded-lg border border-blue-400 px-3 py-2 focus:border-blue-600 focus:outline-none">
                     </label>
                     <label class="block">
-                        <span class="text-sm font-semibold text-slate-700">Tarikh</span>
+                        <span class="text-sm font-semibold text-slate-700">Tarikh Ulasan</span>
                         <input type="date" name="tarikh_ulasan_jkdm" value="{{ old('tarikh_ulasan_jkdm', $permohonan->tarikh_ulasan_jkdm?->format('Y-m-d')) }}" class="mt-1 w-full rounded-lg border border-blue-400 px-3 py-2 focus:border-blue-600 focus:outline-none">
                     </label>
-                </div>
-
-                <div class="grid gap-4 md:grid-cols-2">
                     <label class="block">
-                        <span class="text-sm font-semibold text-slate-700">Keputusan</span>
-                        <select name="status" class="mt-1 w-full rounded-lg border border-blue-400 px-3 py-2 focus:border-blue-600 focus:outline-none">
-                            @foreach(['Dalam tindakan', 'Diluluskan', 'Tidak diluluskan'] as $status)
-                                <option value="{{ $status }}" @selected(old('status', $permohonan->status ?? 'Dalam tindakan') === $status)>{{ $status }}</option>
-                            @endforeach
-                        </select>
-                    </label>
-                    <label class="block">
-                        <span class="text-sm font-semibold text-slate-700">Tarikh Diluluskan</span>
-                        <input type="date" name="tarikh_diluluskan" value="{{ old('tarikh_diluluskan', $permohonan->tarikh_diluluskan?->format('Y-m-d')) }}" class="mt-1 w-full rounded-lg border border-blue-400 px-3 py-2 focus:border-blue-600 focus:outline-none">
+                        <span class="text-sm font-semibold text-slate-700">Tarikh Tamat CGA</span>
+                        <input type="date" name="tarikh_tamat_cga" value="{{ old('tarikh_tamat_cga', $permohonan->tarikh_tamat_cga?->format('Y-m-d')) }}" class="mt-1 w-full rounded-lg border border-blue-400 px-3 py-2 focus:border-blue-600 focus:outline-none">
                     </label>
                 </div>
 
-                <div class="grid gap-4 md:grid-cols-2">
-                    <label class="block">
-                        <span class="text-sm font-semibold text-slate-700">No. Sijil</span>
-                        <input type="text" name="no_sijil_pengecualian" value="{{ old('no_sijil_pengecualian', $permohonan->no_sijil_pengecualian) }}" class="mt-1 w-full rounded-lg border border-blue-400 px-3 py-2 focus:border-blue-600 focus:outline-none">
-                    </label>
-                    <label class="block">
-                        <span class="text-sm font-semibold text-slate-700">Tarikh Tamat</span>
-                        <input type="date" name="tarikh_tamat" value="{{ old('tarikh_tamat', $permohonan->tarikh_tamat?->format('Y-m-d')) }}" class="mt-1 w-full rounded-lg border border-blue-400 px-3 py-2 focus:border-blue-600 focus:outline-none">
-                    </label>
+                <div class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                    Keputusan Pengarah Kastam Negeri, Tarikh Diluluskan, Tarikh Tamat dan No. Sijil akan diisi oleh Pelulus.
                 </div>
-
-                <label class="block">
-                    <span class="text-sm font-semibold text-slate-700">Muat Naik Sijil Pengecualian PDF</span>
-                    <input type="file" name="sijil_pengecualian" accept="application/pdf" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2">
-                </label>
             </div>
 
             <div class="mt-6 flex flex-wrap gap-3">
                 <button type="submit" class="rounded-lg bg-emerald-600 px-10 py-2.5 font-bold text-white shadow hover:bg-emerald-700">Hantar</button>
+                <a href="{{ route('admin.permohonan.pdf', $permohonan) }}" class="rounded-lg bg-red-600 px-10 py-2.5 font-bold text-white shadow hover:bg-red-700">Print PDF</a>
                 <a href="{{ route('admin.senaraipermohonan') }}" class="rounded-lg bg-blue-500 px-10 py-2.5 font-bold text-white shadow hover:bg-blue-600">Kembali</a>
             </div>
         </form>

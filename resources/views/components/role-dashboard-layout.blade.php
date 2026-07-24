@@ -11,7 +11,7 @@
     $currentUser = auth()->user();
     $displayName = $currentUser?->name ?: $currentUser?->login_id ?: 'Pengguna';
     $roleLabel = strtoupper($currentUser?->role ?: $role);
-    $showBrandLabel = ! in_array($role, ['syarikat', 'admin', 'jkdm'], true);
+    $showBrandLabel = ! in_array($role, ['syarikat', 'admin', 'jkdm', 'pelulus'], true);
 @endphp
 
 <!DOCTYPE html>

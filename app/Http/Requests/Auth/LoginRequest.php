@@ -30,7 +30,7 @@ class LoginRequest extends FormRequest
         return [
             'login_id' => ['required', 'string'],
             'password' => ['required', 'string'],
-            'user_type' => ['required', 'string', 'in:syarikat,jkdm,admin'],
+            'user_type' => ['required', 'string', 'in:syarikat,jkdm,admin,pelulus'],
         ];
     }
 
