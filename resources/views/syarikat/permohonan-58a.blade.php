@@ -14,6 +14,7 @@
         $states = ['Johor','Kedah','Kelantan','Melaka','Negeri Sembilan','Pahang','Perak','Perlis','Penang','Sabah','Sarawak','Selangor','Terengganu','WP Kuala Lumpur','WP Labuan','WP Putrajaya'];
         $kodTarifOld = old('kod_tarif', ['']);
         $barangRows = max(1, count($kodTarifOld));
+        $displayName = auth()->user()->name ?: auth()->user()->login_id ?: 'pengguna';
     @endphp
 
     <div class="space-y-6">
@@ -159,14 +160,32 @@
                     <button type="button" onclick="addRow()" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">Tambah Baris</button>
                 </section>
 
-                    <section class="space-y-4">
-                        <h3 class="text-lg font-semibold text-slate-800">Muat Naik Fail Berkaitan</h3>
-                        <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
-                            <label class="block text-sm font-medium text-slate-700">(SSM, MAA, PDA2)</label>
-                            <input type="file" name="attachments[]" multiple class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none" />
-                            <p class="mt-2 text-xs text-slate-500">Nota: fail lampiran tidak boleh diisi semula automatik selepas validasi gagal.</p>
-                        </div>
-                    </section>
+                <section class="space-y-4">
+                    <h3 class="text-lg font-semibold text-slate-800">Muat Naik Fail Berkaitan</h3>
+                    <div class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                        <label class="block text-sm font-medium text-slate-700">(SSM, MAA, PDA2)</label>
+                        <input type="file" name="attachments[]" multiple class="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none" />
+                        <p class="mt-2 text-xs text-slate-500">Nota: fail lampiran tidak boleh diisi semula automatik selepas validasi gagal.</p>
+                    </div>
+                </section>
+
+                <section class="space-y-4">
+                    <h3 class="text-lg font-semibold text-slate-800">PENGAKUAN</h3>
+                    <div class="rounded-2xl border border-slate-200 bg-sky-50 p-4 text-sm leading-7 text-slate-800">
+                        <label class="flex items-start gap-3">
+                            <input
+                                type="checkbox"
+                                name="pengakuan_ditandatangani"
+                                value="1"
+                                @checked(old('pengakuan_ditandatangani'))
+                                class="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span>
+                                Saya memohon untuk membeli barang-barang dan Pengecualian dituntut di bawah Butiran 58A Jadual A, Perintah Cukai Jualan (Orang Yang Dikecualikan Daripada Cukai Jualan) 2018 tertakluk kepada syarat-syarat yang ditetapkan. Saya mengaku semua butiran yang diberikan adalah betul dan benar.
+                            </span>
+                        </label>
+                    </div>
+                </section>
 
                 <div class="flex flex-wrap gap-3 pt-4">
                     <button type="submit" class="rounded-lg bg-emerald-600 px-8 py-2.5 text-sm font-semibold text-white hover:bg-emerald-700">Hantar Permohonan</button>

@@ -40,6 +40,7 @@ class Permohonan58ATest extends TestCase
             'tandatangan_jawatan',
             'pembekal_nama',
             'pembekal_alamat',
+            'pengakuan_ditandatangani',
             'kod_tarif',
             'perihal_barang',
             'unit',
@@ -78,6 +79,7 @@ class Permohonan58ATest extends TestCase
             'tandatangan_jawatan' => 'Pengurus',
             'pembekal_nama' => 'Pembekal Sdn Bhd',
             'pembekal_alamat' => 'Alamat Pembekal',
+            'pengakuan_ditandatangani' => '1',
             'kod_tarif' => ['1234'],
             'perihal_barang' => ['Minyak bunker'],
             'unit' => ['liter'],
@@ -123,6 +125,7 @@ class Permohonan58ATest extends TestCase
             'tandatangan_jawatan' => 'Pengurus',
             'pembekal_nama' => 'Pembekal Sdn Bhd',
             'pembekal_alamat' => 'Alamat Pembekal',
+            'pengakuan_ditandatangani' => '1',
             'kod_tarif' => ['1234'],
             'perihal_barang' => ['Minyak bunker'],
             'unit' => ['liter'],
@@ -139,5 +142,49 @@ class Permohonan58ATest extends TestCase
 
         $response->assertRedirect(route('syarikat.senaraipermohonan'));
         $this->assertDatabaseCount('permohonan_58a', 1);
+    }
+
+    public function test_permohonan_58a_requires_acknowledgement_checkbox(): void
+    {
+        $user = User::query()->create([
+            'name' => 'Test User',
+            'login_id' => 'tester',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        $payload = [
+            'nama' => 'Tester',
+            'no_telefon' => '0123456789',
+            'email' => 'tester@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Tester Sdn Bhd',
+            'no_pendaftaran_cukai' => '',
+            'tarikh_permohonan' => '2026-07-25',
+            'no_kelulusan' => 'JKDM-001',
+            'no_pesanan_belian' => 'PO-001',
+            'alamat' => 'Alamat 1, Kuala Lumpur',
+            'negeri' => 'WP Kuala Lumpur',
+            'tandatangan_nama' => 'Tester',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'kod_tarif' => ['1234'],
+            'perihal_barang' => ['Minyak bunker'],
+            'unit' => ['liter'],
+            'deskripsi' => ['Barang lengkap'],
+            'kuantiti' => [10],
+            'nilai' => [1000],
+            'kawasan' => ['Port Klang'],
+            'attachments' => [
+                UploadedFile::fake()->create('ssm.pdf', 100, 'application/pdf'),
+            ],
+        ];
+
+        $response = $this->actingAs($user)->post(route('syarikat.permohonan-58a.store'), $payload);
+
+        $response->assertSessionHasErrors(['pengakuan_ditandatangani']);
     }
 }

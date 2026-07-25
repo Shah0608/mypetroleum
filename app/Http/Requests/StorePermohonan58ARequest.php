@@ -39,6 +39,7 @@ class StorePermohonan58ARequest extends FormRequest
             'tandatangan_jawatan' => ['required', 'string', 'max:255'],
             'pembekal_nama' => ['required', 'string', 'max:255'],
             'pembekal_alamat' => ['required', 'string'],
+            'pengakuan_ditandatangani' => ['accepted'],
             'kod_tarif' => ['required', 'array', 'min:1'],
             'perihal_barang' => ['required', 'array', 'min:1'],
             'unit' => ['required', 'array', 'min:1'],
