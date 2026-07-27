@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Permohonan58A;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,6 +44,16 @@ class PelulusController extends Controller
         return view('pelulus.semakan-permohonan', compact('permohonan'));
     }
 
+    public function previewApplication(Permohonan58A $permohonan): mixed
+    {
+        return view('pdf.permohonan-58a', [
+            'permohonan' => $permohonan,
+            'previewMode' => true,
+            'downloadUrl' => route('pelulus.permohonan.pdf', $permohonan),
+            'backUrl' => route('pelulus.permohonan.semak', $permohonan),
+        ]);
+    }
+
     public function update(Request $request, Permohonan58A $permohonan): RedirectResponse
     {
         $data = $request->validate([
@@ -70,9 +79,10 @@ class PelulusController extends Controller
 
     public function printApplication(Permohonan58A $permohonan): Response
     {
-        return Pdf::loadView('pdf.permohonan-58a', compact('permohonan'))
-            ->setPaper('a4')
-            ->download('permohonan-58a-'.$permohonan->id.'.pdf');
+        return response()->view('pdf.permohonan-58a', [
+            'permohonan' => $permohonan,
+            'printMode' => true,
+        ]);
     }
 
     /**

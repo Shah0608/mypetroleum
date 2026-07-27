@@ -90,6 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/jkdm/senarailaporan/export', [JkdmController::class, 'exportReports'])->middleware('role:jkdm')->name('jkdm.senarailaporan.export');
     Route::get('/jkdm/senaraipermohonan', [JkdmController::class, 'applications'])->middleware('role:jkdm')->name('jkdm.senaraipermohonan');
     Route::get('/jkdm/senaraipermohonan/{permohonan}/semak', [JkdmController::class, 'review'])->middleware('role:jkdm')->name('jkdm.permohonan.semak');
+    Route::get('/jkdm/senaraipermohonan/{permohonan}/preview', [JkdmController::class, 'previewApplication'])->middleware('role:jkdm')->name('jkdm.permohonan.preview');
     Route::put('/jkdm/senaraipermohonan/{permohonan}', [JkdmController::class, 'update'])->middleware('role:jkdm')->name('jkdm.permohonan.update');
     Route::get('/jkdm/senaraipermohonan/{permohonan}/pdf', [JkdmController::class, 'printApplication'])->middleware('role:jkdm')->name('jkdm.permohonan.pdf');
 
@@ -101,6 +102,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->middleware('role:pelulus')->name('pelulus.utama');
     Route::get('/pelulus/senaraipermohonan', [PelulusController::class, 'applications'])->middleware('role:pelulus')->name('pelulus.senaraipermohonan');
     Route::get('/pelulus/senaraipermohonan/{permohonan}/semak', [PelulusController::class, 'review'])->middleware('role:pelulus')->name('pelulus.permohonan.semak');
+    Route::get('/pelulus/senaraipermohonan/{permohonan}/preview', [PelulusController::class, 'previewApplication'])->middleware('role:pelulus')->name('pelulus.permohonan.preview');
     Route::put('/pelulus/senaraipermohonan/{permohonan}', [PelulusController::class, 'update'])->middleware('role:pelulus')->name('pelulus.permohonan.update');
     Route::get('/pelulus/senaraipermohonan/{permohonan}/pdf', [PelulusController::class, 'printApplication'])->middleware('role:pelulus')->name('pelulus.permohonan.pdf');
 
@@ -121,6 +123,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/admin/senarailaporan/{laporan}', [AdminController::class, 'destroyReport'])->middleware('role:admin')->name('admin.laporan.destroy');
     Route::get('/admin/senaraipermohonan', [AdminController::class, 'applications'])->middleware('role:admin')->name('admin.senaraipermohonan');
     Route::get('/admin/senaraipermohonan/{permohonan}/semak', [AdminController::class, 'reviewApplication'])->middleware('role:admin')->name('admin.permohonan.semak');
+    Route::get('/admin/senaraipermohonan/{permohonan}/preview', [AdminController::class, 'previewApplication'])->middleware('role:admin')->name('admin.permohonan.preview');
     Route::put('/admin/senaraipermohonan/{permohonan}', [AdminController::class, 'updateApplication'])->middleware('role:admin')->name('admin.permohonan.update');
     Route::get('/admin/senaraipermohonan/{permohonan}/pdf', [AdminController::class, 'printApplication'])->middleware('role:admin')->name('admin.permohonan.pdf');
     Route::delete('/admin/senaraipermohonan/{permohonan}', [AdminController::class, 'destroyApplication'])->middleware('role:admin')->name('admin.permohonan.destroy');

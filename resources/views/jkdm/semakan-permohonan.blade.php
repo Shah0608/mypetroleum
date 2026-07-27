@@ -56,9 +56,60 @@
 
             <div class="mt-6 flex flex-wrap gap-3">
                 <button type="submit" class="rounded-lg bg-emerald-600 px-10 py-2.5 font-bold text-white shadow hover:bg-emerald-700">Hantar</button>
-                <a href="{{ route('jkdm.permohonan.pdf', $permohonan) }}" class="rounded-lg bg-red-600 px-10 py-2.5 font-bold text-white shadow hover:bg-red-700">Print PDF</a>
+                <button type="button" onclick="openJkdmPreview()" class="rounded-lg bg-red-600 px-10 py-2.5 font-bold text-white shadow hover:bg-red-700">Print PDF</button>
                 <a href="{{ route('jkdm.senaraipermohonan') }}" class="rounded-lg bg-blue-500 px-10 py-2.5 font-bold text-white shadow hover:bg-blue-600">Kembali</a>
             </div>
         </form>
     </div>
+
+    <div id="jkdm-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 px-4 py-6" aria-hidden="true">
+        <div class="w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+            <div class="flex items-center justify-between border-b border-slate-200 px-5 py-4">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Preview Exemption Certificate</h3>
+                    <p class="text-sm text-slate-500">Semak sijil sebelum memuat turun PDF.</p>
+                </div>
+                <button type="button" onclick="closeJkdmPreview()" class="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200">Tutup</button>
+            </div>
+            <div class="bg-slate-200">
+                <iframe id="jkdm-preview-frame" class="h-[85vh] w-full border-0" title="Preview Exemption Certificate"></iframe>
+            </div>
+            <div class="flex flex-wrap gap-3 border-t border-slate-200 px-5 py-4">
+                <button type="button" onclick="printJkdmPreview()" class="rounded-lg bg-red-600 px-6 py-2.5 font-bold text-white shadow hover:bg-red-700">Cetak / Simpan PDF</button>
+                <button type="button" onclick="printJkdmPreview()" class="rounded-lg bg-slate-800 px-6 py-2.5 font-bold text-white shadow hover:bg-slate-900">Print</button>
+                <button type="button" onclick="closeJkdmPreview()" class="rounded-lg bg-blue-500 px-6 py-2.5 font-bold text-white shadow hover:bg-blue-600">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openJkdmPreview() {
+            const modal = document.getElementById('jkdm-preview-modal');
+            const frame = document.getElementById('jkdm-preview-frame');
+
+            frame.src = @json(route('jkdm.permohonan.preview', $permohonan));
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeJkdmPreview() {
+            const modal = document.getElementById('jkdm-preview-modal');
+            const frame = document.getElementById('jkdm-preview-frame');
+
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            modal.setAttribute('aria-hidden', 'true');
+            frame.src = 'about:blank';
+        }
+
+        function printJkdmPreview() {
+            const frame = document.getElementById('jkdm-preview-frame');
+
+            if (frame.contentWindow) {
+                frame.contentWindow.focus();
+                frame.contentWindow.print();
+            }
+        }
+    </script>
 </x-role-dashboard-layout>

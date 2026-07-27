@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\LaporanCjp;
 use App\Models\Permohonan58A;
 use App\Models\User;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -120,6 +119,16 @@ class AdminController extends Controller
         return view('admin.semakan-permohonan', compact('permohonan'));
     }
 
+    public function previewApplication(Permohonan58A $permohonan): mixed
+    {
+        return view('pdf.permohonan-58a', [
+            'permohonan' => $permohonan,
+            'previewMode' => true,
+            'downloadUrl' => route('admin.permohonan.pdf', $permohonan),
+            'backUrl' => route('admin.permohonan.semak', $permohonan),
+        ]);
+    }
+
     public function updateApplication(Request $request, Permohonan58A $permohonan): RedirectResponse
     {
         $data = $request->validate([
@@ -187,9 +196,10 @@ class AdminController extends Controller
 
     public function printApplication(Permohonan58A $permohonan): Response
     {
-        return Pdf::loadView('pdf.permohonan-58a', compact('permohonan'))
-            ->setPaper('a4')
-            ->download('permohonan-58a-'.$permohonan->id.'.pdf');
+        return response()->view('pdf.permohonan-58a', [
+            'permohonan' => $permohonan,
+            'printMode' => true,
+        ]);
     }
 
     public function reports(): mixed
