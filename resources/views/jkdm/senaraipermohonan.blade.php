@@ -9,6 +9,23 @@
     ]"
 >
     <div class="space-y-6">
+        @if(!empty($approvalNotifications) && $approvalNotifications->isNotEmpty())
+            <div id="jkdm-approval-notification" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 py-6">
+                <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
+                    <h3 class="text-lg font-bold text-slate-900">Permohonan telah diluluskan Pelulus</h3>
+                    <div class="mt-4 space-y-2 text-sm text-slate-700">
+                        @foreach($approvalNotifications as $notification)
+                            <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2">
+                                <span class="font-semibold">{{ $notification->nama_syarikat ?: 'Syarikat' }}</span>
+                                <span class="block text-xs text-emerald-700">No. Sijil: {{ $notification->no_sijil_pengecualian }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                    <button type="button" onclick="document.getElementById('jkdm-approval-notification').remove()" class="mt-5 rounded-lg bg-blue-600 px-5 py-2 text-sm font-bold text-white hover:bg-blue-700">Tutup</button>
+                </div>
+            </div>
+        @endif
+
         <!-- Pengecualian Butiran 58A Header Seksyen -->
         <div class="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-lg shadow-slate-950/10">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 mb-6">
@@ -83,8 +100,8 @@
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_tamat ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 text-center">
-                                    @if($permohonan->sijil_pengecualian_path)
-                                        <a href="{{ asset('storage/'.$permohonan->sijil_pengecualian_path) }}" target="_blank" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</a>
+                                    @if($permohonan->status === 'Diluluskan' && filled($permohonan->no_sijil_pengecualian))
+                                        <button type="button" onclick="openCertificatePreview(@js(route('jkdm.permohonan.preview', $permohonan)))" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</button>
                                     @else
                                         -
                                     @endif
@@ -107,4 +124,6 @@
             </div>
         </div>
     </div>
+
+    @include('partials.certificate-print-modal', ['modalId' => 'jkdm-list-preview-modal', 'frameId' => 'jkdm-list-preview-frame'])
 </x-role-dashboard-layout>

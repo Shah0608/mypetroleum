@@ -35,7 +35,20 @@ class JkdmController extends Controller
             ->latest()
             ->get();
 
-        return view('jkdm.senaraipermohonan', compact('permohonans'));
+        $approvalNotifications = Permohonan58A::query()
+            ->where('status', 'Diluluskan')
+            ->whereNotNull('no_sijil_pengecualian')
+            ->whereNull('jkdm_notified_at')
+            ->latest('updated_at')
+            ->get(['id', 'nama_syarikat', 'no_sijil_pengecualian']);
+
+        if ($approvalNotifications->isNotEmpty()) {
+            Permohonan58A::query()
+                ->whereKey($approvalNotifications->modelKeys())
+                ->update(['jkdm_notified_at' => now()]);
+        }
+
+        return view('jkdm.senaraipermohonan', compact('permohonans', 'approvalNotifications'));
     }
 
     public function review(Permohonan58A $permohonan): mixed

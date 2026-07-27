@@ -16,48 +16,15 @@
 
         body {
             color: #000;
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 9px;
-            line-height: 1.25;
+            font-family: "Times New Roman", Times, serif;
+            font-size: 12pt;
+            line-height: 1.15;
             margin: 0;
         }
-
-    .preview-toolbar {
-            background: #111827;
-            color: #fff;
-            display: {{ !empty($previewMode) ? 'block' : 'none' }};
-            padding: 16px 20px;
-        }
-
-        .preview-toolbar a {
-            border-radius: 8px;
-            display: inline-block;
-            font-weight: 700;
-            margin-right: 10px;
-            padding: 10px 16px;
-            text-decoration: none;
-        }
-
-        .preview-toolbar .download-button {
-            background: #dc2626;
-            color: #fff;
-        }
-
-        .preview-toolbar .back-button {
-            background: #2563eb;
-            color: #fff;
-        }
-
         .sheet {
             height: 742pt;
             padding: 50pt 51pt;
             position: relative;
-        }
-
-        @media print {
-            .preview-toolbar {
-                display: none !important;
-            }
         }
 
         .page-break {
@@ -65,10 +32,12 @@
         }
 
         .certificate-number {
-            font-size: 9px;
+            font-size: 12pt;
             position: absolute;
+            left: 51pt;
             right: 51pt;
-            top: 91pt;
+            text-align: center;
+            top: 43pt;
         }
 
         .certificate-number .number-value {
@@ -77,149 +46,147 @@
         }
 
         .customs-logo {
-            height: 84pt;
+            height: 77pt;
             left: 50%;
             object-fit: contain;
             position: absolute;
-            top: 135pt;
+            top: 88pt;
             transform: translateX(-50%);
-            width: 96pt;
+            width: 92pt;
         }
 
         .certificate-heading {
-            font-size: 10px;
+            font-size: 12pt;
             font-weight: bold;
             left: 51pt;
-            line-height: 1.45;
+            line-height: 1.15;
             position: absolute;
             right: 51pt;
             text-align: center;
             text-transform: uppercase;
-            top: 230pt;
+            top: 180pt;
         }
 
         .certificate-heading .certificate-title {
             display: block;
-            margin-top: 7pt;
+            font-size: 11pt;
+            line-height: 1.1;
+            margin-top: 14pt;
         }
 
         .statement {
-            font-size: 9px;
-            left: 84pt;
-            line-height: 1.5;
+            font-size: 12pt;
+            left: 69pt;
+            line-height: 1.45;
             position: absolute;
-            right: 62pt;
-            top: 319pt;
+            right: 69pt;
+            top: 285pt;
+        }
+
+        .statement-row {
+            align-items: flex-end;
+            display: flex;
+            gap: 8pt;
+            margin-top: 8pt;
         }
 
         .statement .field-line {
             border-bottom: 0.5pt dotted #000;
-            display: inline-block;
-            height: 14pt;
+            display: block;
+            flex: 1;
+            height: 18pt;
             text-align: center;
-            vertical-align: bottom;
         }
 
         .statement .field-hint {
             display: block;
-            font-size: 8px;
+            font-size: 10pt;
             text-align: center;
         }
 
-        .statement .person-field {
-            margin-left: 8pt;
-            width: 142pt;
-        }
-
-        .statement .company-field {
-            margin-left: 9pt;
-            width: 142pt;
-        }
-
         .statement .person-hint {
-            margin-left: 37pt;
-            width: 145pt;
+            margin-left: 48pt;
+            width: 430pt;
         }
 
         .statement .company-hint {
-            margin-left: 198pt;
-            margin-top: -10pt;
-            width: 145pt;
+            margin-left: 48pt;
+            margin-top: 7pt;
+            width: 430pt;
         }
 
         .address-row {
-            margin-top: 9pt;
+            margin-top: 8pt;
         }
 
         .address-field {
             border-bottom: 0.5pt dotted #000;
-            display: inline-block;
-            height: 15pt;
-            margin-left: 7pt;
-            vertical-align: bottom;
-            width: 425pt;
+            display: block;
+            flex: 1;
+            height: 20pt;
         }
 
         .address-hint {
             display: block;
-            font-size: 8px;
-            margin-left: 181pt;
+            font-size: 10pt;
+            margin-left: 54pt;
             text-align: center;
-            width: 250pt;
+            width: 424pt;
         }
 
         .acknowledgement {
-            margin-top: 25pt;
+            margin-top: 24pt;
             text-align: justify;
         }
 
         .signature-details {
             border-collapse: collapse;
-            font-size: 9px;
-            left: 344pt;
+            font-size: 12pt;
+            left: 305pt;
             position: absolute;
-            top: 580pt;
-            width: 242pt;
+            top: 560pt;
+            width: 238pt;
         }
 
         .signature-details td {
-            padding: 3pt 0;
+            padding: 1pt 0;
             vertical-align: bottom;
         }
 
         .signature-details .signature-label {
             white-space: nowrap;
-            width: 102pt;
+            width: 105pt;
         }
 
         .signature-value {
             border-bottom: 0.5pt dotted #000;
-            min-height: 11pt;
+            min-height: 13pt;
         }
 
         .certificate-dates {
-            font-size: 9px;
-            left: 84pt;
+            font-size: 12pt;
+            left: 69pt;
             position: absolute;
-            top: 658pt;
+            top: 657pt;
         }
 
         .date-line {
             border-bottom: 0.5pt dotted #000;
             display: inline-block;
-            min-width: 175pt;
+            min-width: 185pt;
             text-align: center;
         }
 
         .expiry-date {
-            left: 336pt;
+            left: 298pt;
             position: absolute;
-            top: 672pt;
+            top: 667pt;
         }
 
         .computer-note {
-            bottom: 42pt;
-            font-size: 9px;
+            bottom: 65pt;
+            font-size: 9pt;
+            font-style: italic;
             left: 51pt;
             position: absolute;
             right: 51pt;
@@ -347,13 +314,6 @@
     </style>
 </head>
 <body>
-    @if(!empty($previewMode))
-        <div class="preview-toolbar">
-            <a href="{{ $downloadUrl ?? '#' }}" class="download-button" target="_blank" rel="noopener">Muat Turun PDF</a>
-            <a href="{{ $backUrl ?? '#' }}" class="back-button">Kembali</a>
-        </div>
-    @endif
-
     <div class="sheet page-break">
         <div class="certificate-number">
             Exemption Certificate Number: <span class="number-value">{{ $permohonan->no_sijil_pengecualian ?: '-' }}</span>
@@ -368,15 +328,27 @@
         </div>
 
         <div class="statement">
-            I <span class="field-line person-field">{{ $permohonan->tandatangan_nama ?: $permohonan->nama ?: '-' }}</span>
-            for <span class="field-line company-field">{{ $permohonan->nama_syarikat ?: '-' }}</span>
+            <div class="statement-row">
+                <span>I</span>
+                <span class="field-line">{{ $permohonan->tandatangan_nama ?: $permohonan->nama ?: '-' }}</span>
+            </div>
             <span class="field-hint person-hint">(Director, Manager, Secretary or any other authorized person)</span>
+
+            <div class="statement-row">
+                <span>for</span>
+                <span class="field-line">{{ $permohonan->nama_syarikat ?: '-' }}</span>
+            </div>
             <span class="field-hint company-hint">(Name of firm or company)</span>
 
-            <div class="address-row">
-                address <span class="address-field">{{ $permohonan->alamat ?: '-' }}</span>
-                <span class="address-hint">(Address of place of business)</span>
+            <div class="statement-row address-row">
+                <span>address</span>
+                <span class="address-field">{{ $permohonan->alamat ?: '-' }}</span>
             </div>
+            <div class="statement-row">
+                <span>&nbsp;</span>
+                <span class="address-field">&nbsp;</span>
+            </div>
+            <span class="address-hint">(Address of place of business)</span>
 
             <div class="acknowledgement">
                 hereby acknowledges that the goods described in Appendix are purchased / transported with exemption from sales tax

@@ -63,8 +63,8 @@
                             <td class="px-4 py-3">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
                             <td class="px-4 py-3">{{ $permohonan->tarikh_tamat ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
                             <td class="px-4 py-3">
-                                @if($permohonan->sijil_pengecualian_path)
-                                    <a href="{{ asset('storage/'.$permohonan->sijil_pengecualian_path) }}" target="_blank" class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500">pdf</a>
+                                @if($permohonan->status === 'Diluluskan' && filled($permohonan->no_sijil_pengecualian))
+                                    <button type="button" onclick="openCertificatePreview(@js(route('admin.permohonan.preview', $permohonan)))" class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500">pdf</button>
                                 @else
                                     -
                                 @endif
@@ -87,4 +87,6 @@
             </table>
         </div>
     </div>
+
+    @include('partials.certificate-print-modal', ['modalId' => 'admin-list-preview-modal', 'frameId' => 'admin-list-preview-frame'])
 </x-role-dashboard-layout>

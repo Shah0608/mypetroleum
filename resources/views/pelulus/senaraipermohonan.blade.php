@@ -82,8 +82,8 @@
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_tamat ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 text-center">
-                                    @if($permohonan->sijil_pengecualian_path)
-                                        <a href="{{ asset('storage/'.$permohonan->sijil_pengecualian_path) }}" target="_blank" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</a>
+                                    @if($permohonan->status === 'Diluluskan' && filled($permohonan->no_sijil_pengecualian))
+                                        <button type="button" onclick="openCertificatePreview(@js(route('pelulus.permohonan.preview', $permohonan)))" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</button>
                                     @else
                                         -
                                     @endif
@@ -106,4 +106,6 @@
             </div>
         </div>
     </div>
+
+    @include('partials.certificate-print-modal', ['modalId' => 'pelulus-list-preview-modal', 'frameId' => 'pelulus-list-preview-frame'])
 </x-role-dashboard-layout>

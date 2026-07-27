@@ -20,6 +20,7 @@ class Permohonan58A extends Model
         'tarikh_tamat' => 'date',
         'tarikh_ulasan_jkdm' => 'date',
         'tarikh_tamat_cga' => 'date',
+        'jkdm_notified_at' => 'datetime',
     ];
 
     protected $fillable = [
@@ -28,7 +29,7 @@ class Permohonan58A extends Model
         'tandatangan_nama', 'tandatangan_no_kp', 'tandatangan_jawatan',
         'pembekal_nama', 'pembekal_alamat', 'barangs', 'attachments', 'status', 'no_sijil_pengecualian',
         'tarikh_diluluskan', 'tarikh_tamat', 'sijil_pengecualian_path', 'ulasan_jkdm', 'nama_pegawai_jkdm', 'tarikh_ulasan_jkdm',
-        'tarikh_tamat_cga',
+        'tarikh_tamat_cga', 'jkdm_notified_at',
     ];
 
     public function user(): BelongsTo

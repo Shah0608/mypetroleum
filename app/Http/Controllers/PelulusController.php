@@ -61,17 +61,17 @@ class PelulusController extends Controller
             'tarikh_diluluskan' => ['nullable', 'date'],
             'kod_stesen' => ['nullable', 'string', 'max:10'],
             'no_daftar_sijil' => ['nullable', 'string', 'max:20'],
-            'sijil_pengecualian' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
         ]);
 
+        $wasApproved = $permohonan->status === 'Diluluskan';
         $data['tarikh_tamat'] = $permohonan->tarikh_tamat_cga;
         $data['no_sijil_pengecualian'] = $this->formatCertificateNumber($permohonan, $data);
 
-        if ($request->hasFile('sijil_pengecualian')) {
-            $data['sijil_pengecualian_path'] = $request->file('sijil_pengecualian')->store('sijil-pengecualian', 'public');
+        if (! $wasApproved && $data['status'] === 'Diluluskan') {
+            $data['jkdm_notified_at'] = null;
         }
 
-        unset($data['kod_stesen'], $data['no_daftar_sijil'], $data['sijil_pengecualian']);
+        unset($data['kod_stesen'], $data['no_daftar_sijil']);
         $permohonan->update($data);
 
         return to_route('pelulus.senaraipermohonan')->with('success', 'Keputusan berjaya disimpan.');

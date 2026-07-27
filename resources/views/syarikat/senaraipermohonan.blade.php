@@ -99,8 +99,8 @@
                                         <td class="px-4 py-3">{{ $p->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($p->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
                                         <td class="px-4 py-3">{{ $p->tarikh_tamat ? \Illuminate\Support\Carbon::parse($p->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
                                         <td class="px-4 py-3">
-                                            @if($p->sijil_pengecualian_path)
-                                                <a href="{{ asset('storage/'.$p->sijil_pengecualian_path) }}" target="_blank" class="inline-flex rounded-md bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500">pdf</a>
+                                            @if($p->status === 'Diluluskan' && filled($p->no_sijil_pengecualian))
+                                                <button type="button" onclick="openCertificatePreview(@js(route('syarikat.permohonan-58a.preview', $p)))" class="inline-flex rounded-md bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500">pdf</button>
                                             @else
                                                 -
                                             @endif
@@ -114,4 +114,6 @@
             @endif
         </div>
     </div>
+
+    @include('partials.certificate-print-modal', ['modalId' => 'syarikat-list-preview-modal', 'frameId' => 'syarikat-list-preview-frame'])
 </x-role-dashboard-layout>

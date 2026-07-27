@@ -77,6 +77,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->middleware('role:syarikat')->name('syarikat.senarailaporan');
     Route::get('/syarikat/senaraipermohonan', [Permohonan58AController::class, 'index'])
         ->middleware('role:syarikat')->name('syarikat.senaraipermohonan');
+    Route::get('/syarikat/senaraipermohonan/{permohonan}/preview', [Permohonan58AController::class, 'preview'])
+        ->middleware('role:syarikat')->name('syarikat.permohonan-58a.preview');
+    Route::get('/syarikat/senaraipermohonan/{permohonan}/pdf', [Permohonan58AController::class, 'print'])
+        ->middleware('role:syarikat')->name('syarikat.permohonan-58a.pdf');
     Route::get('/syarikat/permohonan-58a/{id}/attachment/{index}', [Permohonan58AController::class, 'downloadAttachment'])
         ->middleware('role:syarikat')->name('syarikat.permohonan-58a.attachment');
 

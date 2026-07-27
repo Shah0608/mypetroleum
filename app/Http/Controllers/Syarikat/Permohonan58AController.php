@@ -7,6 +7,7 @@ use App\Http\Requests\StorePermohonan58ARequest;
 use App\Models\Permohonan58A;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 class Permohonan58AController extends Controller
 {
@@ -121,5 +122,27 @@ class Permohonan58AController extends Controller
         $path = $attachments[$index];
 
         return Storage::disk('public')->download($path);
+    }
+
+    public function preview(Permohonan58A $permohonan): mixed
+    {
+        abort_unless((int) $permohonan->user_id === auth()->id(), 403);
+
+        return view('pdf.permohonan-58a', [
+            'permohonan' => $permohonan,
+            'previewMode' => true,
+            'downloadUrl' => route('syarikat.permohonan-58a.pdf', $permohonan),
+            'backUrl' => route('syarikat.senaraipermohonan'),
+        ]);
+    }
+
+    public function print(Permohonan58A $permohonan): Response
+    {
+        abort_unless((int) $permohonan->user_id === auth()->id(), 403);
+
+        return response()->view('pdf.permohonan-58a', [
+            'permohonan' => $permohonan,
+            'printMode' => true,
+        ]);
     }
 }

@@ -58,21 +58,78 @@ class Permohonan58APdfTest extends TestCase
         $response->assertSee('Exemption Certificate 58A', false);
     }
 
+    public function test_certificate_button_only_appears_for_approved_application_with_certificate_number(): void
+    {
+        $pelulus = $this->user('pelulus');
+        $approved = $this->permohonan();
+        $pending = $this->permohonan([
+            'nama_syarikat' => 'Syarikat Belum Lulus',
+            'status' => 'Dalam tindakan',
+            'no_sijil_pengecualian' => null,
+            'tarikh_diluluskan' => null,
+            'tarikh_tamat' => null,
+        ]);
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.senaraipermohonan'));
+
+        $response->assertOk();
+        $response->assertSee('senaraipermohonan\/'.$approved->id.'\/preview', false);
+        $response->assertDontSee('senaraipermohonan\/'.$pending->id.'\/preview', false);
+    }
+
+    public function test_syarikat_can_preview_own_approved_certificate(): void
+    {
+        $syarikat = $this->user('syarikat');
+        $permohonan = $this->permohonan(['user_id' => $syarikat->id]);
+
+        $response = $this->actingAs($syarikat)->get(route('syarikat.permohonan-58a.preview', $permohonan));
+
+        $response->assertOk();
+        $response->assertSee('Exemption Certificate 58A', false);
+    }
+
+    public function test_jkdm_receives_popup_when_pelulus_approves_application(): void
+    {
+        $pelulus = $this->user('pelulus');
+        $jkdm = $this->user('jkdm');
+        $permohonan = $this->permohonan([
+            'status' => 'Dalam tindakan',
+            'no_sijil_pengecualian' => null,
+            'tarikh_diluluskan' => null,
+            'tarikh_tamat' => null,
+            'jkdm_notified_at' => now(),
+        ]);
+
+        $this->actingAs($pelulus)->put(route('pelulus.permohonan.update', $permohonan), [
+            'status' => 'Diluluskan',
+            'tarikh_diluluskan' => '2026-07-27',
+            'kod_stesen' => 'M10',
+            'no_daftar_sijil' => '1',
+        ])->assertRedirect(route('pelulus.senaraipermohonan'));
+
+        $response = $this->actingAs($jkdm)->get(route('jkdm.senaraipermohonan'));
+
+        $response->assertOk();
+        $response->assertSee('Permohonan telah diluluskan Pelulus', false);
+        $response->assertSee('M10-58A-2607-0001', false);
+        $this->assertNotNull($permohonan->fresh()->jkdm_notified_at);
+    }
+
     private function user(string $role): User
     {
         return User::query()->create([
             'name' => ucfirst($role),
-            'login_id' => $role.'-test',
+            'login_id' => $role.'-test-'.User::query()->count(),
             'role' => $role,
             'password' => Hash::make('password'),
         ]);
     }
 
-    private function permohonan(): Permohonan58A
+    private function permohonan(array $overrides = []): Permohonan58A
     {
         $syarikat = $this->user('syarikat');
 
-        return Permohonan58A::query()->create([
+        return Permohonan58A::query()->create(array_merge([
             'user_id' => $syarikat->id,
             'nama' => 'Ahmad Bin Ali',
             'no_telefon' => '0123456789',
@@ -104,6 +161,6 @@ class Permohonan58APdfTest extends TestCase
             'tarikh_diluluskan' => '2026-07-27',
             'tarikh_tamat' => '2026-12-31',
             'tarikh_tamat_cga' => '2026-12-31',
-        ]);
+        ], $overrides));
     }
 }
