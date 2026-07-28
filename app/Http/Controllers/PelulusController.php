@@ -3,12 +3,78 @@
 namespace App\Http\Controllers;
 
 use App\Models\Permohonan58A;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class PelulusController extends Controller
 {
+    /**
+     * @return array<string, string>
+     */
+    private function stationOptions(): array
+    {
+        return [
+            'M10' => 'M10 - Melaka',
+            'N10' => 'N10 - Seremban',
+            'N11' => 'N11 - Port Dickson',
+            'P11' => 'P11 - Georgetown',
+            'P13' => 'P13 - Seberang Jaya',
+            'R10' => 'R10 - Kangar',
+            'S10' => 'S10 - Kota Kinabalu',
+            'T10' => 'T10 - Kuala Terengganu',
+            'T13' => 'T13 - Kemaman',
+            'W10' => 'W10 - Kuala Lumpur',
+            'W24' => 'W24 - KLIA CD',
+            'A10' => 'A10 - Ipoh',
+            'A11' => 'A11 - Taiping',
+            'B10' => 'B10 - Port Klang',
+            'B16' => 'B16 - Subang (OPA)',
+            'C10' => 'C10 - Kuantan',
+            'C11' => 'C11 - Bentong',
+            'D10' => 'D10 - Kota Bahru',
+            'E10' => 'E10 - Labuan',
+            'J11' => 'J11 - Batu Pahat',
+            'J12' => 'J12 - Kluang',
+            'J13' => 'J13 - Muar',
+            'J31' => 'J31 - Johor Bahru',
+            'K10' => 'K10 - Alor Setar',
+            'Y58' => 'Y58 - Bintulu',
+            'Y60' => 'Y60 - Kuching',
+        ];
+    }
+
+    public function users(): mixed
+    {
+        $query = trim((string) request()->query('q', ''));
+
+        $allPermohonans = Permohonan58A::query()
+            ->select(['id', 'user_id', 'nama_syarikat', 'alamat'])
+            ->latest()
+            ->get();
+
+        $permohonanCountsByCompany = $allPermohonans
+            ->countBy(function (Permohonan58A $permohonan): string {
+                return mb_strtolower(trim((string) $permohonan->nama_syarikat));
+            });
+
+        $penggunas = $allPermohonans
+            ->load('user')
+            ->unique('user_id')
+            ->values()
+            ->when($query !== '', function ($collection) use ($query) {
+                return $collection->filter(function ($permohonan) use ($query): bool {
+                    return str_contains(strtolower((string) $permohonan->nama_syarikat), strtolower($query))
+                        || str_contains(strtolower((string) $permohonan->alamat), strtolower($query))
+                        || str_contains(strtolower((string) $permohonan->user?->name), strtolower($query))
+                        || str_contains(strtolower((string) $permohonan->user?->login_id), strtolower($query));
+                })->values();
+            });
+
+        return view('pelulus.senarai-pengguna', compact('penggunas', 'query', 'permohonanCountsByCompany'));
+    }
+
     public function applications(): mixed
     {
         $query = trim((string) request()->query('q', ''));
@@ -59,7 +125,7 @@ class PelulusController extends Controller
         $data = $request->validate([
             'status' => ['required', 'in:Dalam tindakan,Diluluskan,Tidak diluluskan'],
             'tarikh_diluluskan' => ['nullable', 'date'],
-            'kod_stesen' => ['nullable', 'string', 'max:10'],
+            'kod_stesen' => ['nullable', 'string', 'in:'.implode(',', array_keys($this->stationOptions()))],
             'no_daftar_sijil' => ['nullable', 'string', 'max:20'],
         ]);
 
@@ -79,10 +145,9 @@ class PelulusController extends Controller
 
     public function printApplication(Permohonan58A $permohonan): Response
     {
-        return response()->view('pdf.permohonan-58a', [
+        return Pdf::loadView('pdf.permohonan-58a', [
             'permohonan' => $permohonan,
-            'printMode' => true,
-        ]);
+        ])->setPaper('a4')->download('permohonan-58a-'.$permohonan->id.'.pdf');
     }
 
     /**

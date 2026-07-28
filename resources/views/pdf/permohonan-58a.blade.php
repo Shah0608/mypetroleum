@@ -2,47 +2,76 @@
     $barangs = collect($permohonan->barangs ?? []);
     $approvedAreas = $barangs->pluck('kawasan')->filter()->unique()->values();
     $logoPath = asset('images/kastam-diraja-malaysia-seeklogo.png');
-    $certificateExpiryDate = $permohonan->tarikh_tamat?->format('d/m/Y') ?? $permohonan->tarikh_tamat_cga?->format('d/m/Y') ?? '-';
+    $certificateExpiryDate = $permohonan->tarikh_tamat_pda2_verifikasi?->format('d/m/Y')
+        ?? $permohonan->tarikh_tamat?->format('d/m/Y')
+        ?? $permohonan->tarikh_tamat_cga?->format('d/m/Y')
+        ?? '-';
 @endphp
+
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Exemption Certificate 58A</title>
     <style>
+        /* ==========================================
+           1. TETAPAN PRINT & LAYOUT DOKUMEN
+           ========================================== */
+        * {
+            box-sizing: border-box;
+        }
+
         @page {
+            size: A4 portrait;
             margin: 0;
         }
 
-        body {
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
             color: #000;
             font-family: "Times New Roman", Times, serif;
             font-size: 12pt;
             line-height: 1.15;
-            margin: 0;
         }
+
+        /* Paparan Lembaran Skrin (A4 Preview) */
         .sheet {
-            height: 742pt;
+            width: 210mm;
+            min-height: 297mm;
+            height: 297mm;
             padding: 50pt 51pt;
             position: relative;
-        }
-
-        .page-break {
+            background: #ffffff;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow: hidden;
             page-break-after: always;
+            break-after: page;
+            page-break-inside: avoid;
+            break-inside: avoid;
         }
 
+        .sheet:last-of-type {
+            page-break-after: auto !important;
+            break-after: auto !important;
+            margin-bottom: 0;
+        }
+
+        /* Exemption Certificate Number dialihkan ke hujung kanan */
         .certificate-number {
             font-size: 12pt;
             position: absolute;
-            left: 51pt;
             right: 51pt;
-            text-align: center;
+            text-align: right;
             top: 43pt;
         }
 
         .certificate-number .number-value {
             display: inline-block;
             min-width: 130pt;
+            text-align: left;
         }
 
         .customs-logo {
@@ -76,26 +105,33 @@
 
         .statement {
             font-size: 12pt;
-            left: 69pt;
+            left: 63pt;
             line-height: 1.45;
             position: absolute;
-            right: 69pt;
+            right: 63pt;
             top: 285pt;
         }
 
         .statement-row {
-            align-items: flex-end;
-            display: flex;
-            gap: 8pt;
+            display: table;
+            width: 100%;
             margin-top: 8pt;
+        }
+
+        .statement-label {
+            display: table-cell;
+            width: 40pt;
+            white-space: nowrap;
         }
 
         .statement .field-line {
             border-bottom: 0.5pt dotted #000;
-            display: block;
-            flex: 1;
+            display: table-cell;
             height: 18pt;
-            text-align: center;
+            padding-left: 10pt;
+            padding-right: 10pt;
+            text-align: center; /* DIUBAH: Data berada di tengah garisan */
+            vertical-align: bottom;
         }
 
         .statement .field-hint {
@@ -105,12 +141,12 @@
         }
 
         .statement .person-hint {
-            margin-left: 48pt;
+            margin-left: 40pt;
             width: 430pt;
         }
 
         .statement .company-hint {
-            margin-left: 48pt;
+            margin-left: 40pt;
             margin-top: 7pt;
             width: 430pt;
         }
@@ -121,15 +157,19 @@
 
         .address-field {
             border-bottom: 0.5pt dotted #000;
-            display: block;
-            flex: 1;
+            display: table-cell;
             height: 20pt;
+            padding-left: 10pt;
+            padding-right: 10pt;
+            text-align: center; /* DIUBAH: Alamat berada di tengah garisan */
+            vertical-align: bottom;
         }
 
         .address-hint {
             display: block;
             font-size: 10pt;
             margin-left: 54pt;
+            margin-top: 2pt;
             text-align: center;
             width: 424pt;
         }
@@ -139,52 +179,66 @@
             text-align: justify;
         }
 
-        .signature-details {
-            border-collapse: collapse;
-            font-size: 12pt;
-            left: 305pt;
+        /* Container Tandatangan di Kanan */
+        .signature-right {
             position: absolute;
-            top: 560pt;
-            width: 238pt;
+            right: 51pt;
+            top: 545pt;
+            width: 220pt;
         }
 
-        .signature-details td {
+        .signature-right table {
+            border-collapse: collapse;
+            font-size: 11pt;
+            width: 100%;
+        }
+
+        .signature-right td {
             padding: 1pt 0;
             vertical-align: bottom;
         }
 
-        .signature-details .signature-label {
+        .signature-right .signature-label {
             white-space: nowrap;
-            width: 105pt;
+            width: 110pt;
+            padding-right: 5pt;
+            text-align: left;
         }
 
-        .signature-value {
+        .signature-right .signature-value {
             border-bottom: 0.5pt dotted #000;
-            min-height: 13pt;
+            text-align: left;
+            padding-left: 5pt;
         }
 
-        .certificate-dates {
-            font-size: 12pt;
-            left: 69pt;
+        /* Baris Tarikh */
+        .dates-container {
             position: absolute;
+            left: 63pt;
+            right: 51pt;
             top: 657pt;
+            font-size: 11pt;
+        }
+
+        .dates-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .dates-table td {
+            vertical-align: bottom;
         }
 
         .date-line {
             border-bottom: 0.5pt dotted #000;
             display: inline-block;
-            min-width: 185pt;
             text-align: center;
-        }
-
-        .expiry-date {
-            left: 298pt;
-            position: absolute;
-            top: 667pt;
+            padding-left: 5pt;
+            padding-right: 5pt;
         }
 
         .computer-note {
-            bottom: 65pt;
+            bottom: 40pt;
             font-size: 9pt;
             font-style: italic;
             left: 51pt;
@@ -193,84 +247,77 @@
             text-align: center;
         }
 
-        .notice-sheet {
-            height: 731pt;
-            padding: 61pt 63pt 50pt;
-        }
-
         .notice-heading {
-            font-size: 10px;
+            font-size: 11pt;
             font-weight: bold;
             margin-bottom: 4pt;
             text-transform: uppercase;
         }
 
         .notice-title {
-            font-size: 9px;
+            font-size: 11pt;
             font-weight: bold;
-            line-height: 1.4;
-            margin-bottom: 18pt;
+            line-height: 1.35;
+            margin-bottom: 16pt;
             text-transform: uppercase;
         }
 
+        /* Tetapan Syarat-Syarat */
         .conditions {
             border-collapse: collapse;
             width: 100%;
         }
 
         .conditions td {
-            font-size: 8.5px;
-            line-height: 1.4;
-            padding: 0 0 10pt;
+            font-size: 10.5pt;
+            font-weight: normal;
+            line-height: 1.35;
+            padding: 0 0 8pt;
             text-align: justify;
             vertical-align: top;
         }
 
         .conditions .number {
-            padding-right: 9pt;
+            font-weight: bold;
+            padding-right: 8pt;
             text-align: right;
-            width: 10pt;
+            width: 14pt;
         }
 
         .notice-footer {
             bottom: 36pt;
-            font-size: 9px;
+            font-size: 10pt;
             left: 0;
             position: absolute;
             right: 0;
             text-align: center;
         }
 
-        .appendix-sheet {
-            height: 744pt;
-            padding: 49pt 51pt;
-        }
-
         .appendix-label {
             border-top: 0.5pt dotted #000;
-            font-size: 10px;
+            font-size: 11pt;
             padding-top: 8pt;
             position: absolute;
             right: 51pt;
             text-align: right;
-            top: 71pt;
+            top: 45pt;
             width: 440pt;
         }
 
         .appendix-title {
-            font-size: 10px;
+            font-size: 11pt;
             font-weight: bold;
-            line-height: 1.45;
-            margin: 115pt auto 20pt;
+            line-height: 1.4;
+            margin: 45pt auto 16pt;
             text-align: center;
             text-transform: uppercase;
         }
 
         .appendix-subtitle {
-            font-size: 10px;
+            font-size: 10.5pt;
             font-weight: bold;
-            line-height: 1.4;
-            margin-bottom: 14pt;
+            line-height: 1.35;
+            margin-bottom: 10pt;
             text-transform: uppercase;
         }
 
@@ -282,16 +329,16 @@
         .goods-table th,
         .goods-table td {
             border: 0.5pt solid #000;
-            font-size: 8px;
-            min-height: 25pt;
-            padding: 5pt 4pt;
-            vertical-align: top;
+            font-size: 10pt;
+            min-height: 22pt;
+            padding: 5pt 6pt;
+            vertical-align: middle;
         }
 
         .goods-table th {
             font-weight: bold;
             text-align: center;
-            vertical-align: middle;
+            background-color: #fcfcfc;
         }
 
         .number-cell {
@@ -300,21 +347,90 @@
         }
 
         .area-title {
-            font-size: 10px;
+            font-size: 11pt;
             font-weight: bold;
-            line-height: 1.45;
-            margin: 63pt auto 20pt;
+            line-height: 1.4;
+            margin: 25pt auto 12pt;
             text-align: center;
             text-transform: uppercase;
         }
 
         .area-table {
-            margin-top: 14pt;
+            margin-top: 8pt;
+        }
+
+        /* ==========================================
+           2. STYLES BUTANG BAHAGIAN BAWAH
+           ========================================== */
+        .bottom-action-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px auto 40px auto;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 40px;
+            padding: 0 20px;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            line-height: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            transition: opacity 0.2s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .btn-pdf {
+            background-color: #dc3545;
+        }
+
+        .btn-close {
+            background-color: #0d6efd;
+        }
+
+        /* ==========================================
+           3. PENETAPAN KHUSUS WAKTU PRINT (CETAK/PDF)
+           ========================================== */
+        @media print {
+            html, body {
+                background: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .sheet {
+                margin: 0 !important;
+                box-shadow: none !important;
+                width: 100% !important;
+                height: 100vh !important;
+            }
+
+            .no-print,
+            .bottom-action-bar {
+                display: none !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="sheet page-break">
+
+    <!-- Muka Surat 1: Sijil Pengecualian -->
+    <div class="sheet">
         <div class="certificate-number">
             Exemption Certificate Number: <span class="number-value">{{ $permohonan->no_sijil_pengecualian ?: '-' }}</span>
         </div>
@@ -329,24 +445,20 @@
 
         <div class="statement">
             <div class="statement-row">
-                <span>I</span>
+                <span class="statement-label">I</span>
                 <span class="field-line">{{ $permohonan->tandatangan_nama ?: $permohonan->nama ?: '-' }}</span>
             </div>
             <span class="field-hint person-hint">(Director, Manager, Secretary or any other authorized person)</span>
 
             <div class="statement-row">
-                <span>for</span>
+                <span class="statement-label">for</span>
                 <span class="field-line">{{ $permohonan->nama_syarikat ?: '-' }}</span>
             </div>
             <span class="field-hint company-hint">(Name of firm or company)</span>
 
             <div class="statement-row address-row">
-                <span>address</span>
+                <span class="statement-label" style="width: 54pt;">address</span>
                 <span class="address-field">{{ $permohonan->alamat ?: '-' }}</span>
-            </div>
-            <div class="statement-row">
-                <span>&nbsp;</span>
-                <span class="address-field">&nbsp;</span>
             </div>
             <span class="address-hint">(Address of place of business)</span>
 
@@ -357,36 +469,47 @@
             </div>
         </div>
 
-        <table class="signature-details">
-            <tr>
-                <td class="signature-label">Signature :</td>
-                <td class="signature-value">&nbsp;</td>
-            </tr>
-            <tr>
-                <td class="signature-label">Name :</td>
-                <td class="signature-value">{{ $permohonan->tandatangan_nama ?: $permohonan->nama ?: '-' }}</td>
-            </tr>
-            <tr>
-                <td class="signature-label">Identity Card Number :</td>
-                <td class="signature-value">{{ $permohonan->tandatangan_no_kp ?: $permohonan->no_kp ?: '-' }}</td>
-            </tr>
-            <tr>
-                <td class="signature-label">Designation :</td>
-                <td class="signature-value">{{ $permohonan->tandatangan_jawatan ?: $permohonan->jawatan ?: '-' }}</td>
-            </tr>
-        </table>
-
-        <div class="certificate-dates">
-            Date: <span class="date-line">{{ $permohonan->tarikh_diluluskan?->format('d/m/Y') ?? '-' }}</span>
+        <!-- Blok Tandatangan (Kanan) -->
+        <div class="signature-right">
+            <table>
+                <tr>
+                    <td class="signature-label">Signature :</td>
+                    <td class="signature-value">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="signature-label">Name :</td>
+                    <td class="signature-value">{{ $permohonan->tandatangan_nama ?: $permohonan->nama ?: '-' }}</td>
+                </tr>
+                <tr>
+                    <td class="signature-label">Identity Card Number :</td>
+                    <td class="signature-value">{{ $permohonan->tandatangan_no_kp ?: $permohonan->no_kp ?: '-' }}</td>
+                </tr>
+                <tr>
+                    <td class="signature-label">Designation :</td>
+                    <td class="signature-value">{{ $permohonan->tandatangan_jawatan ?: $permohonan->jawatan ?: '-' }}</td>
+                </tr>
+            </table>
         </div>
-        <div class="expiry-date">
-            Expiry date of exemption certificate: <span class="date-line">{{ $certificateExpiryDate }}</span>
+
+        <!-- Blok Tarikh Sebaris -->
+        <div class="dates-container">
+            <table class="dates-table">
+                <tr>
+                    <td style="text-align: left;">
+                        Date: <span class="date-line" style="min-width: 110pt;">{{ $permohonan->tarikh_diluluskan?->format('d/m/Y') ?? '-' }}</span>
+                    </td>
+                    <td style="text-align: right;">
+                        Expiry date of exemption certificate : <span class="date-line" style="min-width: 110pt;">{{ $certificateExpiryDate }}</span>
+                    </td>
+                </tr>
+            </table>
         </div>
 
         <div class="computer-note">This document is computer printed and digitally signed. No signature is required</div>
     </div>
 
-    <div class="sheet notice-sheet page-break">
+    <!-- Muka Surat 2: Notis & Syarat -->
+    <div class="sheet">
         <div class="notice-heading">Notis Penting / Important Notice</div>
         <div class="notice-title">
             Syarat-Syarat Di Bawah Butiran 58A, Jadual A, Perintah Cukai Jualan<br>
@@ -408,7 +531,8 @@
         <div class="notice-footer">NOTICE</div>
     </div>
 
-    <div class="sheet appendix-sheet">
+    <!-- Muka Surat 3: Lampiran Barangan & Kawasan -->
+    <div class="sheet">
         <div class="appendix-label">Lampiran 58A</div>
         <div class="appendix-title">
             Senarai Barang Yang Diluluskan Pengecualian Cukai Jualan Di Bawah Butiran 58, Jadual A,<br>
@@ -420,25 +544,25 @@
             <thead>
                 <tr>
                     <th style="width: 28pt;">Bil</th>
-                    <th style="width: 78pt;">No. Kod Tariff</th>
-                    <th style="width: 125pt;">Perihal Barangan</th>
-                    <th style="width: 125pt;">Deskripsi</th>
+                    <th style="width: 80pt;">No. Kod Tariff</th>
+                    <th style="width: 120pt;">Perihal Barangan</th>
+                    <th style="width: 130pt;">Deskripsi</th>
                     <th style="width: 85pt;">Kuantiti Dipohon</th>
-                    <th style="width: 64pt;">Nilai</th>
+                    <th style="width: 65pt;">Nilai</th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($barangs as $index => $barang)
                     <tr>
                         <td class="number-cell">{{ $index + 1 }}</td>
-                        <td>{{ $barang['kod_tarif'] ?? '-' }}</td>
+                        <td style="text-align: center;">{{ $barang['kod_tarif'] ?? '-' }}</td>
                         <td>{{ $barang['perihal'] ?? '-' }}</td>
                         <td>{{ $barang['deskripsi'] ?? '-' }}</td>
-                        <td>{{ $barang['kuantiti'] ?? '-' }} {{ $barang['unit'] ?? '' }}</td>
-                        <td>{{ isset($barang['nilai']) ? number_format((float) $barang['nilai'], 2) : '-' }}</td>
+                        <td style="text-align: center;">{{ $barang['kuantiti'] ?? '-' }} {{ $barang['unit'] ?? '' }}</td>
+                        <td style="text-align: right;">{{ isset($barang['nilai']) ? number_format((float) $barang['nilai'], 2) : '-' }}</td>
                     </tr>
                 @empty
-                    <tr><td class="number-cell">1</td><td colspan="5">&nbsp;</td></tr>
+                    <tr><td class="number-cell">1</td><td colspan="5" style="text-align: center;">-</td></tr>
                 @endforelse
             </tbody>
         </table>
@@ -450,12 +574,23 @@
 
         <div class="appendix-subtitle">Bahagian E: Kawasan Yang Diluluskan Bagi Menjalankan Aktiviti Bunkering<br>Part E: Approved Area For Business</div>
         <table class="goods-table area-table">
-            <thead><tr><th style="width: 28pt;">Bil</th><th>Nama Kawasan<br>Name Of Area</th></tr></thead>
+            <thead>
+                <tr>
+                    <th style="width: 28pt;">Bil</th>
+                    <th>Nama Kawasan<br>Name Of Area</th>
+                </tr>
+            </thead>
             <tbody>
                 @forelse($approvedAreas as $index => $area)
-                    <tr><td class="number-cell">{{ $index + 1 }}</td><td>{{ $area }}</td></tr>
+                    <tr>
+                        <td class="number-cell">{{ $index + 1 }}</td>
+                        <td>{{ $area }}</td>
+                    </tr>
                 @empty
-                    <tr><td class="number-cell">1</td><td>&nbsp;</td></tr>
+                    <tr>
+                        <td class="number-cell">1</td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
                 @endforelse
             </tbody>
         </table>

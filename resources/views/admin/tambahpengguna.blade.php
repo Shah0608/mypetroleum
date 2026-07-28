@@ -1,7 +1,7 @@
 <x-role-dashboard-layout
     role="admin"
     title="{{ isset($user) ? 'KEMASKINI PENGGUNA' : 'TAMBAH PENGGUNA' }}"
-    subtitle="Borang pengguna sistem MyPetroleum."
+    subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('admin.utama'), 'active' => '/admin/utama'],
         ['label' => 'URUS PENGGUNA', 'url' => route('admin.uruspengguna'), 'active' => '/admin/uruspengguna'],
@@ -40,7 +40,7 @@
             <label class="block">
                 <span class="text-sm font-semibold text-slate-700">Role</span>
                 <select name="role" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none" required>
-                    @foreach(['syarikat' => 'Syarikat', 'jkdm' => 'JKDM', 'pelulus' => 'Pelulus', 'admin' => 'Admin'] as $value => $label)
+                    @foreach(['syarikat' => 'Syarikat', 'jkdm' => 'JKDM', 'ketua_unit_jkdm' => 'KETUA_UNIT(JKDM)', 'pelulus' => 'Pelulus', 'admin' => 'Admin'] as $value => $label)
                         <option value="{{ $value }}" @selected(old('role', $user->role ?? '') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>

@@ -26,6 +26,14 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get the normalized role used by the application UI and routing.
+     */
+    public function normalizedRole(): string
+    {
+        return $this->role;
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>

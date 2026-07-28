@@ -41,7 +41,7 @@ class AdminController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'login_id' => ['required', 'string', 'max:255', 'unique:users,login_id'],
-            'role' => ['required', 'in:syarikat,jkdm,admin,pelulus'],
+            'role' => ['required', 'in:syarikat,jkdm,ketua_unit_jkdm,admin,pelulus'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);
         $data['password'] = Hash::make($data['password']);
@@ -60,7 +60,7 @@ class AdminController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'login_id' => ['required', 'string', 'max:255', 'unique:users,login_id,'.$user->id],
-            'role' => ['required', 'in:syarikat,jkdm,admin,pelulus'],
+            'role' => ['required', 'in:syarikat,jkdm,ketua_unit_jkdm,admin,pelulus'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ]);
         if (blank($data['password'] ?? null)) {

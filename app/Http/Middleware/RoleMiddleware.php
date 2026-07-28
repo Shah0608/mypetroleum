@@ -17,7 +17,14 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, $role): Response
     {
         // Jika tidak log masuk, atau peranan tidak sepadan
-        if (! Auth::check() || Auth::user()->role !== $role) {
+        $userRole = Auth::user()?->role;
+        $allowedRoles = match ($role) {
+            'jkdm' => ['jkdm', 'ketua_unit_jkdm'],
+            'ketua' => ['ketua_unit_jkdm'],
+            default => [$role],
+        };
+
+        if (! Auth::check() || ! in_array($userRole, $allowedRoles, true)) {
             abort(403, 'Akses Terhalang! Peranan Tidak Dibenarkan.');
         }
 

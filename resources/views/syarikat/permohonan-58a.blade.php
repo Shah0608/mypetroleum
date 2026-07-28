@@ -1,7 +1,7 @@
 <x-role-dashboard-layout
     role="syarikat"
     title="BORANG 58A"
-    subtitle="Permohonan untuk syarikat/pemilik."
+    subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('syarikat.utama'), 'route' => 'syarikat.utama', 'active' => '/syarikat/utama'],
         ['label' => 'PERMOHONAN', 'url' => route('syarikat.permohonan-58a'), 'route' => 'syarikat.permohonan-58a', 'active' => '/syarikat/permohonan-58a'],
@@ -49,7 +49,7 @@
                             <input type="email" name="email" value="{{ old('email') }}" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none" />
                         </div>
                         <div class="space-y-2">
-                            <label class="text-sm font-medium text-slate-700">No. Kad Pengenalan</label>
+                            <label class="text-sm font-medium text-slate-700">No. Kad Pengenalan (Tanpa "-")</label>
                             <input type="text" name="no_kp" value="{{ old('no_kp') }}" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:border-blue-500 focus:outline-none" />
                         </div>
                         <div class="space-y-2">

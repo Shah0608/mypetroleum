@@ -99,12 +99,12 @@
     </section>
 
     <section class="space-y-4">
-        <h3 class="text-lg font-semibold text-slate-800">Muat Naik Fail Berkaitan</h3>
+        <h3 class="text-lg font-semibold text-slate-800">Muat Turun Fail Berkaitan</h3>
         @if(!empty($permohonan->attachments))
             <div class="flex flex-wrap gap-2">
                 @foreach($permohonan->attachments as $index => $attachment)
                     <a href="{{ asset('storage/'.$attachment) }}" target="_blank" class="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700">
-                        Lampiran {{ $index + 1 }}
+                        Lampiran
                     </a>
                 @endforeach
             </div>

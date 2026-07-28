@@ -1,7 +1,7 @@
 <x-role-dashboard-layout
     role="syarikat"
     title="SENARAI LAPORAN"
-    subtitle="Senarai laporan yang dihantar oleh syarikat."
+    subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('syarikat.utama'), 'route' => 'syarikat.utama', 'active' => '/syarikat/utama'],
         ['label' => 'PERMOHONAN', 'url' => route('syarikat.permohonan-58a'), 'route' => 'syarikat.permohonan-58a', 'active' => '/syarikat/permohonan-58a'],

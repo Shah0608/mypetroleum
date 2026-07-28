@@ -1,11 +1,11 @@
 <x-role-dashboard-layout
-    role="jkdm"
+    role="ketua"
     title="UTAMA"
     subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
-        ['label' => 'UTAMA', 'url' => route('jkdm.utama'), 'active' => '/jkdm/utama'],
-        ['label' => 'SENARAI LAPORAN', 'url' => route('jkdm.senarailaporan'), 'active' => '/jkdm/senarailaporan'],
-        ['label' => 'SENARAI PERMOHONAN', 'url' => route('jkdm.senaraipermohonan'), 'active' => '/jkdm/senaraipermohonan'],
+        ['label' => 'UTAMA', 'url' => route('ketua.utama'), 'active' => '/ketua/utama'],
+        ['label' => 'SENARAI LAPORAN', 'url' => route('ketua.senarailaporan'), 'active' => '/ketua/senarailaporan'],
+        ['label' => 'SENARAI PERMOHONAN', 'url' => route('ketua.senaraipermohonan'), 'active' => '/ketua/senaraipermohonan'],
     ]"
 >
     <div class="space-y-8">
@@ -18,12 +18,8 @@
         </div>
 
         <div class="grid gap-4 md:grid-cols-2">
-            <a href="{{ route('jkdm.senaraipermohonan') }}" class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900 transition hover:bg-sky-300">
+            <a href="{{ route('ketua.senaraipermohonan') }}" class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900 transition hover:bg-sky-300">
                 Jumlah Permohonan: {{ $jumlahPermohonan ?? 0 }}
-            </a>
-                
-            <a href="{{ route('jkdm.senarailaporan') }}" class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900 transition hover:bg-sky-300">
-                Jumlah Laporan CJ(P): {{ $jumlahLaporanCjp ?? 0 }}
             </a>
         </div>
     </div>

@@ -16,6 +16,7 @@ Route::get('/', function () {
         return match (auth()->user()->role) {
             'admin' => redirect()->route('admin.utama'),
             'jkdm' => redirect()->route('jkdm.utama'),
+            'ketua_unit_jkdm' => redirect()->route('ketua.utama'),
             'pelulus' => redirect()->route('pelulus.utama'),
             default => redirect()->route('syarikat.utama'),
         };
@@ -35,6 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return match (auth()->user()->role) {
             'admin' => redirect()->route('admin.utama'),
             'jkdm' => redirect()->route('jkdm.utama'),
+            'ketua_unit_jkdm' => redirect()->route('ketua.utama'),
             'pelulus' => redirect()->route('pelulus.utama'),
             default => redirect()->route('syarikat.utama'),
         };
@@ -44,6 +46,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/syarikat/utama', function () {
         return view('syarikat.utama', [
             'jumlahPermohonan' => Permohonan58A::query()
+                ->where('user_id', auth()->id())
+                ->count(),
+            'jumlahLaporanCjp' => LaporanCjp::query()
                 ->where('user_id', auth()->id())
                 ->count(),
         ]);
@@ -88,6 +93,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/jkdm/utama', function () {
         return view('jkdm.utama', [
             'jumlahPermohonan' => Permohonan58A::query()->count(),
+            'jumlahLaporanCjp' => LaporanCjp::query()->count(),
         ]);
     })->middleware('role:jkdm')->name('jkdm.utama');
     Route::get('/jkdm/senarailaporan', [JkdmController::class, 'reports'])->middleware('role:jkdm')->name('jkdm.senarailaporan');
@@ -98,12 +104,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/jkdm/senaraipermohonan/{permohonan}', [JkdmController::class, 'update'])->middleware('role:jkdm')->name('jkdm.permohonan.update');
     Route::get('/jkdm/senaraipermohonan/{permohonan}/pdf', [JkdmController::class, 'printApplication'])->middleware('role:jkdm')->name('jkdm.permohonan.pdf');
 
+    // Haluan Ketua Unit
+    Route::get('/ketua/utama', [JkdmController::class, 'ketuaHome'])->middleware('role:ketua')->name('ketua.utama');
+    Route::get('/ketua/senarailaporan', [JkdmController::class, 'ketuaReports'])->middleware('role:ketua')->name('ketua.senarailaporan');
+    Route::get('/ketua/senaraipermohonan', [JkdmController::class, 'ketuaApplications'])->middleware('role:ketua')->name('ketua.senaraipermohonan');
+    Route::get('/ketua/senaraipermohonan/{permohonan}/semak', [JkdmController::class, 'ketuaReview'])->middleware('role:ketua')->name('ketua.permohonan.semak');
+    Route::get('/ketua/senaraipermohonan/{permohonan}/preview', [JkdmController::class, 'ketuaPreviewApplication'])->middleware('role:ketua')->name('ketua.permohonan.preview');
+    Route::put('/ketua/senaraipermohonan/{permohonan}', [JkdmController::class, 'ketuaUpdate'])->middleware('role:ketua')->name('ketua.permohonan.update');
+    Route::get('/ketua/senaraipermohonan/{permohonan}/pdf', [JkdmController::class, 'ketuaPrintApplication'])->middleware('role:ketua')->name('ketua.permohonan.pdf');
+
     // Haluan Pelulus
     Route::get('/pelulus/utama', function () {
         return view('pelulus.utama', [
+            'jumlahPengguna' => Permohonan58A::query()->select('user_id')->distinct()->count('user_id'),
             'jumlahPermohonan' => Permohonan58A::query()->count(),
         ]);
     })->middleware('role:pelulus')->name('pelulus.utama');
+    Route::get('/pelulus/senarai-pengguna', [PelulusController::class, 'users'])->middleware('role:pelulus')->name('pelulus.senarai-pengguna');
     Route::get('/pelulus/senaraipermohonan', [PelulusController::class, 'applications'])->middleware('role:pelulus')->name('pelulus.senaraipermohonan');
     Route::get('/pelulus/senaraipermohonan/{permohonan}/semak', [PelulusController::class, 'review'])->middleware('role:pelulus')->name('pelulus.permohonan.semak');
     Route::get('/pelulus/senaraipermohonan/{permohonan}/preview', [PelulusController::class, 'previewApplication'])->middleware('role:pelulus')->name('pelulus.permohonan.preview');

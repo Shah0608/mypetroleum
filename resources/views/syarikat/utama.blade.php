@@ -20,12 +20,12 @@
         </div>
 
         <div class="grid gap-4 md:grid-cols-2">
-            <div class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900">
+            <a href="{{ route('syarikat.senaraipermohonan') }}" class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900 transition hover:bg-sky-300">
                 Jumlah Permohonan: {{ $jumlahPermohonan ?? 0 }}
-            </div>
-            <div class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900">
-                Jumlah Penyata Bunkering-01: 1
-            </div>
+            </a>
+            <a href="{{ route('syarikat.senarailaporan') }}" class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900 transition hover:bg-sky-300">
+                Jumlah Laporan CJ(P): {{ $jumlahLaporanCjp ?? 0 }}
+            </a>
         </div>
     </div>
 </x-role-dashboard-layout>

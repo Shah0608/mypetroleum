@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('login_id')->unique(); // ID Pengguna unik
-            $table->enum('role', ['syarikat', 'jkdm', 'admin', 'pelulus'])
+            $table->enum('role', ['syarikat', 'jkdm', 'ketua_unit_jkdm', 'admin', 'pelulus'])
                 ->default('syarikat'); // Peranan pengguna
             $table->string('password');
             $table->rememberToken();

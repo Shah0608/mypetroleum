@@ -20,6 +20,10 @@ class Permohonan58A extends Model
         'tarikh_tamat' => 'date',
         'tarikh_ulasan_jkdm' => 'date',
         'tarikh_tamat_cga' => 'date',
+        'tarikh_ulasan_verifikasi' => 'date',
+        'tarikh_tamat_pda2_verifikasi' => 'date',
+        'tarikh_ulasan_ketua_unit' => 'date',
+        'tarikh_tamat_pda2_ketua_unit' => 'date',
         'jkdm_notified_at' => 'datetime',
     ];
 
@@ -29,7 +33,8 @@ class Permohonan58A extends Model
         'tandatangan_nama', 'tandatangan_no_kp', 'tandatangan_jawatan',
         'pembekal_nama', 'pembekal_alamat', 'barangs', 'attachments', 'status', 'no_sijil_pengecualian',
         'tarikh_diluluskan', 'tarikh_tamat', 'sijil_pengecualian_path', 'ulasan_jkdm', 'nama_pegawai_jkdm', 'tarikh_ulasan_jkdm',
-        'tarikh_tamat_cga', 'jkdm_notified_at',
+        'tarikh_tamat_cga', 'ulasan_pegawai_verifikasi', 'nama_pegawai_verifikasi', 'tarikh_ulasan_verifikasi', 'tarikh_tamat_pda2_verifikasi',
+        'ulasan_ketua_unit', 'nama_pegawai_ketua_unit', 'tarikh_ulasan_ketua_unit', 'tarikh_tamat_pda2_ketua_unit', 'jkdm_notified_at',
     ];
 
     public function user(): BelongsTo

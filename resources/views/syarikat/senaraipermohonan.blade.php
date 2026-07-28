@@ -1,7 +1,7 @@
 <x-role-dashboard-layout
     role="syarikat"
     title="SENARAI PERMOHONAN"
-    subtitle="Senarai permohonan syarikat/pemilik."
+    subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('syarikat.utama'), 'route' => 'syarikat.utama', 'active' => '/syarikat/utama'],
         ['label' => 'PERMOHONAN', 'url' => route('syarikat.permohonan-58a'), 'route' => 'syarikat.permohonan-58a', 'active' => '/syarikat/permohonan-58a'],
@@ -59,7 +59,7 @@
                                 <th class="px-4 py-3 text-left">No. Sijil Pengecualian</th>
                                 <th class="px-4 py-3 text-left">Tarikh Diluluskan</th>
                                 <th class="px-4 py-3 text-left">Tarikh Tamat</th>
-                                <th class="px-4 py-3 text-left">Sijil Pengecualian</th>
+                                <th class="px-4 py-3 text-left">Jana Sijil Pengecualian</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 bg-white">
@@ -87,7 +87,7 @@
                                             @if(!empty($p->attachments))
                                                 <ul class="space-y-1">
                                                     @foreach($p->attachments as $i => $attachment)
-                                                        <li><a href="{{ route('syarikat.permohonan-58a.attachment', [$p->id, $i]) }}" class="text-blue-600 hover:text-blue-800">Muat Turun {{ $i + 1 }}</a></li>
+                                                        <li><a href="{{ route('syarikat.permohonan-58a.attachment', [$p->id, $i]) }}" class="text-blue-600 hover:text-blue-800">Muat Turun</a></li>
                                                     @endforeach
                                                 </ul>
                                             @else

@@ -1,11 +1,11 @@
 <x-role-dashboard-layout
-    role="pelulus"
+    role="ketua"
     title="SENARAI PERMOHONAN"
     subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
-        ['label' => 'UTAMA', 'url' => route('pelulus.utama'), 'active' => '/pelulus/utama'],
-        ['label' => 'SENARAI PENGGUNA', 'url' => route('pelulus.senarai-pengguna'), 'active' => '/pelulus/senarai-pengguna'],
-        ['label' => 'SENARAI PERMOHONAN', 'url' => route('pelulus.senaraipermohonan'), 'active' => '/pelulus/senaraipermohonan'],
+        ['label' => 'UTAMA', 'url' => route('ketua.utama'), 'active' => '/ketua/utama'],
+        ['label' => 'SENARAI LAPORAN', 'url' => route('ketua.senarailaporan'), 'active' => '/ketua/senarailaporan'],
+        ['label' => 'SENARAI PERMOHONAN', 'url' => route('ketua.senaraipermohonan'), 'active' => '/ketua/senaraipermohonan'],
     ]"
 >
     <div class="space-y-6">
@@ -20,8 +20,7 @@
                 </span>
             </div>
 
-            <!-- Bar Carian Panjang (Format: Cari Nama Syarikat / Negeri/Kawasan/Status/No Sijil/Tarikh) -->
-            <form method="GET" action="{{ route('pelulus.senaraipermohonan') }}" class="mb-6 max-w-5xl">
+            <form method="GET" action="{{ route('ketua.senaraipermohonan') }}" class="mb-6 max-w-5xl">
                 <div class="flex items-center overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
                     <span class="whitespace-nowrap border-r border-slate-300 bg-slate-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-600">
                         Cari Nama Syarikat /
@@ -41,12 +40,10 @@
                 </div>
             </form>
 
-            <!-- Kontena Jadual Responsif Luas (Min-width dipanjangkan untuk kolum tambahan) -->
             <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
                 <table class="w-full min-w-[1400px] border-collapse text-left text-sm text-slate-600">
                     <thead>
                         <tr class="bg-slate-100 font-semibold text-slate-700 uppercase text-xs border-b border-slate-200">
-                            <!-- Maklumat Asal dari Syarikat -->
                             <th class="border-r border-slate-200 p-3">Tarikh Permohonan</th>
                             <th class="border-r border-slate-200 p-3">Negeri</th>
                             <th class="border-r border-slate-200 p-3">Nama Syarikat</th>
@@ -54,15 +51,11 @@
                             <th class="border-r border-slate-200 p-3 text-center">Unit</th>
                             <th class="border-r border-slate-200 p-3 text-center">Kuantiti</th>
                             <th class="border-r border-slate-200 p-3">Kawasan</th>
-                            
-                            <!-- Seksyen: Diisi oleh Kastam (Diwarnakan Biru Lembut) -->
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Status</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">No. Sijil Pengecualian</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tarikh Diluluskan</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tarikh Tamat</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900 text-center">Jana Sijil Pengecualian</th>
-                            
-                            <!-- Tindakan Pegawai JKDM -->
                             <th class="p-3 text-center bg-slate-100 text-slate-700">Tindakan</th>
                         </tr>
                     </thead>
@@ -81,16 +74,16 @@
                                 </td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 font-mono text-xs">{{ $permohonan->no_sijil_pengecualian ?? '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
-                                <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_tamat_pda2_verifikasi?->format('d/m/Y') ?? '-' }}</td>
+                                <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_tamat ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 text-center">
                                     @if($permohonan->status === 'Diluluskan' && filled($permohonan->no_sijil_pengecualian))
-                                        <button type="button" onclick="openCertificatePreview(@js(route('pelulus.permohonan.preview', $permohonan)))" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</button>
+                                        <button type="button" onclick="openCertificatePreview(@js(route('ketua.permohonan.preview', $permohonan)))" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</button>
                                     @else
                                         -
                                     @endif
                                 </td>
                                 <td class="p-3 text-center">
-                                    <a href="{{ route('pelulus.permohonan.semak', $permohonan) }}" class="inline-flex items-center rounded-md bg-green-600 px-4 py-1.5 text-xs font-bold text-white shadow-md hover:bg-green-700 transition uppercase tracking-wider">
+                                    <a href="{{ route('ketua.permohonan.semak', $permohonan) }}" class="inline-flex items-center rounded-md bg-green-600 px-4 py-1.5 text-xs font-bold text-white shadow-md hover:bg-green-700 transition uppercase tracking-wider">
                                         semak
                                     </a>
                                 </td>
@@ -108,5 +101,5 @@
         </div>
     </div>
 
-    @include('partials.certificate-print-modal', ['modalId' => 'pelulus-list-preview-modal', 'frameId' => 'pelulus-list-preview-frame'])
+    @include('partials.certificate-print-modal', ['modalId' => 'ketua-list-preview-modal', 'frameId' => 'ketua-list-preview-frame'])
 </x-role-dashboard-layout>

@@ -1,7 +1,7 @@
 <x-role-dashboard-layout
     role="syarikat"
     title="LAPORAN CJ(P)"
-    subtitle="Laporan Cukai Jualan untuk syarikat."
+    subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('syarikat.utama'), 'route' => 'syarikat.utama', 'active' => '/syarikat/utama'],
         ['label' => 'PERMOHONAN', 'url' => route('syarikat.permohonan-58a'), 'route' => 'syarikat.permohonan-58a', 'active' => '/syarikat/permohonan-58a'],
@@ -52,8 +52,9 @@
                         <input 
                             type="text" 
                             name="nama_syarikat"
-                            value="" 
-                            class="w-full sm:w-2/3 rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none" 
+                            value="{{ old('nama_syarikat', auth()->user()->name ?? '') }}" 
+                            readonly
+                            class="w-full sm:w-2/3 rounded-lg border border-slate-300 bg-slate-100 px-3 py-2 text-slate-700 focus:border-blue-500 focus:outline-none" 
                             required
                         />
                     </div>

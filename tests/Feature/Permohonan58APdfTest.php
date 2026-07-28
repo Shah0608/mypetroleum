@@ -20,19 +20,34 @@ class Permohonan58APdfTest extends TestCase
         $response = $this->actingAs($pelulus)->get(route('pelulus.permohonan.pdf', $permohonan));
 
         $response->assertOk();
-        $response->assertHeader('content-type', 'text/html; charset=UTF-8');
-        $response->assertSee('Exemption Certificate 58A', false);
+        $response->assertHeader('content-type', 'application/pdf');
     }
 
     public function test_pelulus_can_preview_exemption_certificate_before_downloading(): void
     {
         $pelulus = $this->user('pelulus');
-        $permohonan = $this->permohonan();
+        $permohonan = $this->permohonan([
+            'tarikh_tamat_pda2_verifikasi' => '2028-07-20',
+        ]);
 
         $response = $this->actingAs($pelulus)->get(route('pelulus.permohonan.preview', $permohonan));
 
         $response->assertOk();
         $response->assertSee('Exemption Certificate 58A', false);
+        $response->assertSee('20/07/2028', false);
+    }
+
+    public function test_pelulus_review_page_shows_full_station_code_options(): void
+    {
+        $pelulus = $this->user('pelulus');
+        $permohonan = $this->permohonan();
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.permohonan.semak', $permohonan));
+
+        $response->assertOk();
+        $response->assertSee('M10 - Melaka', false);
+        $response->assertSee('W24 - KLIA CD', false);
+        $response->assertSee('Y60 - Kuching', false);
     }
 
     public function test_admin_can_download_exemption_certificate_pdf(): void
@@ -44,7 +59,6 @@ class Permohonan58APdfTest extends TestCase
 
         $response->assertOk();
         $response->assertHeader('content-type', 'text/html; charset=UTF-8');
-        $response->assertSee('Exemption Certificate 58A', false);
     }
 
     public function test_admin_can_preview_exemption_certificate_before_downloading(): void

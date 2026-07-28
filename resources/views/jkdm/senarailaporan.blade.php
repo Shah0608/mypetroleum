@@ -1,7 +1,7 @@
 <x-role-dashboard-layout
     role="jkdm"
     title="SENARAI LAPORAN"
-    subtitle="Semakan semua laporan untuk pegawai JKDM."
+    subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('jkdm.utama'), 'active' => '/jkdm/utama'],
         ['label' => 'SENARAI LAPORAN', 'url' => route('jkdm.senarailaporan'), 'active' => '/jkdm/senarailaporan'],

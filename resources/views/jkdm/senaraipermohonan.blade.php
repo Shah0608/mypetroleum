@@ -1,7 +1,7 @@
 <x-role-dashboard-layout
     role="jkdm"
     title="SENARAI PERMOHONAN"
-    subtitle="Semakan permohonan oleh pegawai JKDM."
+    subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('jkdm.utama'), 'active' => '/jkdm/utama'],
         ['label' => 'SENARAI LAPORAN', 'url' => route('jkdm.senarailaporan'), 'active' => '/jkdm/senarailaporan'],
@@ -77,7 +77,7 @@
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">No. Sijil Pengecualian</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tarikh Diluluskan</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tarikh Tamat</th>
-                            <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900 text-center">Sijil Pengecualian</th>
+                            <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900 text-center">Jana Sijil Pengecualian</th>
                             
                             <!-- Tindakan Pegawai JKDM -->
                             <th class="p-3 text-center bg-slate-100 text-slate-700">Tindakan</th>

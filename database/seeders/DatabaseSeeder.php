@@ -27,6 +27,11 @@ class DatabaseSeeder extends Seeder
                 'role' => 'jkdm',
             ],
             [
+                'name' => 'Ketua Unit JKDM',
+                'login_id' => '731215055545',
+                'role' => 'ketua_unit_jkdm',
+            ],
+            [
                 'name' => 'Admin Sistem',
                 'login_id' => '731215055544',
                 'role' => 'admin',

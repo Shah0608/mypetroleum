@@ -10,8 +10,12 @@
     $brandLabel = trim($brand . ' ' . strtoupper($role));
     $currentUser = auth()->user();
     $displayName = $currentUser?->name ?: $currentUser?->login_id ?: 'Pengguna';
-    $roleLabel = strtoupper($currentUser?->role ?: $role);
-    $showBrandLabel = ! in_array($role, ['syarikat', 'admin', 'jkdm', 'pelulus'], true);
+    $roleValue = $currentUser?->role ?: $role;
+    $roleLabel = $roleValue === 'ketua_unit_jkdm'
+        ? 'KETUA_UNIT(JKDM)'
+        : strtoupper($roleValue);
+    $identityLabel = $role === 'syarikat' ? 'Syarikat:' : 'Pengguna:';
+    $showBrandLabel = ! in_array($role, ['syarikat', 'admin', 'jkdm', 'pelulus', 'ketua'], true);
 @endphp
 
 <!DOCTYPE html>
@@ -29,7 +33,7 @@
 </head>
 <body class="font-sans antialiased">
 <div class="min-h-screen bg-sky-700 text-slate-900">
-        <div class="border-b border-black bg-black text-white shadow-lg" style="background-color: #000000;">
+    <div class="border-b border-black bg-black text-white shadow-lg" style="background-color: #000000;">
             <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
                 <div class="flex items-center gap-4">
                     @if ($showBrandLabel)
@@ -64,20 +68,22 @@
 
         <main class="mx-auto max-w-[1200px] px-4 py-5 sm:px-6 lg:px-8">
             <section class="rounded-3xl bg-sky-700 px-3 py-3 text-white">
-                <div class="flex items-start gap-4 sm:gap-6">
-                    <img src="{{ asset('images/kastam-diraja-malaysia-seeklogo.png') }}" alt="Logo Kastam Diraja Malaysia" class="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-20" />
-                    <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="Logo MyPetroleum" class="h-16 w-16 shrink-0 object-contain sm:h-20 sm:w-40" />
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <img src="{{ asset('images/kastam-diraja-malaysia-seeklogo.png') }}" alt="Logo Kastam Diraja Malaysia" class="h-14 w-14 shrink-0 object-contain sm:h-20 sm:w-20" />
+                        <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="Logo MyPetroleum" class="h-14 w-14 shrink-0 object-contain sm:h-20 sm:w-40" />
+                    </div>
 
-                    <div class="flex flex-1 items-start justify-between gap-6 pt-2">
-                        <div>
-                            <h1 class="text-5xl font-bold leading-tight text-white drop-shadow sm:text-6xl">Sistem MyPetroleum </h1>
-                            <p class="mt-1 text-lg italic text-sky-100">{{ $subtitle ?: 'Sistem Maklumat Bunker Petroleum' }}</p>
+                    <div class="flex flex-1 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div class="min-w-0">
+                            <h1 class="text-3xl font-bold leading-tight text-white drop-shadow sm:text-5xl">Sistem MyPetroleum </h1>
+                            <p class="mt-1 text-sm italic text-sky-100 sm:text-lg">{{ $subtitle ?: 'Sistem Maklumat Bunker Petroleum' }}</p>
                         </div>
 
                         <div class="w-full max-w-sm rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-white shadow-lg shadow-slate-950/15 backdrop-blur-sm sm:w-fit">
-                            <div class="space-y-1 text-right">
+                            <div class="space-y-1 text-center sm:text-right">
                                 <div class="text-sm font-semibold tracking-wide text-sky-50">
-                                    Pengguna:
+                                    {{ $identityLabel }}
                                 </div>
                                 <div class="text-base font-semibold sm:text-lg">
                                     {{ $displayName }}

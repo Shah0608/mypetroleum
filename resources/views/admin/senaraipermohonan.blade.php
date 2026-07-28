@@ -1,7 +1,7 @@
 <x-role-dashboard-layout
     role="admin"
     title="SENARAI PERMOHONAN"
-    subtitle="Permohonan yang sedang dalam semakan pentadbir."
+    subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('admin.utama'), 'active' => '/admin/utama'],
         ['label' => 'URUS PENGGUNA', 'url' => route('admin.uruspengguna'), 'active' => '/admin/uruspengguna'],
