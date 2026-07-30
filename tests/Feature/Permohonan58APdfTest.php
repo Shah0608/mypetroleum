@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Permohonan58A;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -89,6 +90,28 @@ class Permohonan58APdfTest extends TestCase
         $response->assertOk();
         $response->assertSee('senaraipermohonan\/'.$approved->id.'\/preview', false);
         $response->assertDontSee('senaraipermohonan\/'.$pending->id.'\/preview', false);
+    }
+
+    public function test_pelulus_application_list_shows_tempoh_hari_and_remaining_days_for_approved_application(): void
+    {
+        Carbon::setTestNow(Carbon::create(2026, 7, 30, 0, 0, 0));
+
+        $pelulus = $this->user('pelulus');
+        $permohonan = $this->permohonan([
+            'tarikh_diluluskan' => '2026-07-27',
+            'tarikh_tamat' => '2026-12-31',
+        ]);
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.senaraipermohonan'));
+
+        $response->assertOk();
+        $response->assertSee('Jumlah Hari Diluluskan', false);
+        $response->assertSee($permohonan->tempoh_hari_label, false);
+        $response->assertSee($permohonan->baki_hari_label, false);
+        $response->assertSee('Masih Berkuatkuasa', false);
+        $response->assertSee('31/12/2026', false);
+
+        Carbon::setTestNow();
     }
 
     public function test_syarikat_can_preview_own_approved_certificate(): void

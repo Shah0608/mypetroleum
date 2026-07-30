@@ -59,6 +59,8 @@
                                 <th class="px-4 py-3 text-left">No. Sijil Pengecualian</th>
                                 <th class="px-4 py-3 text-left">Tarikh Diluluskan</th>
                                 <th class="px-4 py-3 text-left">Tarikh Tamat</th>
+                                <th class="px-4 py-3 text-left">Jumlah Hari Diluluskan</th>
+                                <th class="px-4 py-3 text-left">Indicator Hari</th>
                                 <th class="px-4 py-3 text-left">Jana Sijil Pengecualian</th>
                             </tr>
                         </thead>
@@ -98,6 +100,23 @@
                                         <td class="px-4 py-3">{{ $p->no_sijil_pengecualian ?? '-' }}</td>
                                         <td class="px-4 py-3">{{ $p->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($p->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
                                         <td class="px-4 py-3">{{ $p->tarikh_tamat ? \Illuminate\Support\Carbon::parse($p->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
+                                        <td class="px-4 py-3">
+                                            @if($p->status === 'Diluluskan' && $p->tarikh_diluluskan && $p->tarikh_tamat)
+                                                <div class="font-semibold text-slate-900">{{ $p->tempoh_hari_label }}</div>
+                                                <div class="text-xs text-slate-500">{{ $p->baki_hari_label }}</div>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            @if($p->status === 'Diluluskan' && $p->tarikh_diluluskan && $p->tarikh_tamat)
+                                                <span class="inline-flex items-center justify-center rounded-full px-2.5 py-1 text-center text-xs font-semibold ring-1 ring-inset {{ $p->tempoh_hari_indicator_class }}">
+                                                    {{ $p->tempoh_hari_indicator_label }}
+                                                </span>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                         <td class="px-4 py-3">
                                             @if($p->status === 'Diluluskan' && filled($p->no_sijil_pengecualian))
                                                 <button type="button" onclick="openCertificatePreview(@js(route('syarikat.permohonan-58a.preview', $p)))" class="inline-flex rounded-md bg-red-600 px-3 py-1 text-xs font-semibold text-white hover:bg-red-500">pdf</button>

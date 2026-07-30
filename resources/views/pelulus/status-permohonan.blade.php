@@ -1,44 +1,46 @@
 <x-role-dashboard-layout
-    role="jkdm"
-    title="SENARAI PERMOHONAN"
+    role="pelulus"
+    title="STATUS PERMOHONAN"
     subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
-        ['label' => 'UTAMA', 'url' => route('jkdm.utama'), 'active' => '/jkdm/utama'],
-        ['label' => 'SENARAI LAPORAN', 'url' => route('jkdm.senarailaporan'), 'active' => '/jkdm/senarailaporan'],
-        ['label' => 'SENARAI PERMOHONAN', 'url' => route('jkdm.senaraipermohonan'), 'active' => '/jkdm/senaraipermohonan'],
+        ['label' => 'UTAMA', 'url' => route('pelulus.utama'), 'active' => '/pelulus/utama'],
+        ['label' => 'SENARAI SYARIKAT', 'url' => route('pelulus.senarai-pengguna'), 'active' => '/pelulus/senarai-pengguna'],
+        ['label' => 'SENARAI PERMOHONAN', 'url' => route('pelulus.senaraipermohonan'), 'active' => '/pelulus/senaraipermohonan'],
+        ['label' => 'STATUS', 'url' => route('pelulus.status-permohonan'), 'active' => '/pelulus/status-permohonan'],
     ]"
 >
     <div class="space-y-6">
-        @if(!empty($approvalNotifications) && $approvalNotifications->isNotEmpty())
-            <div id="jkdm-approval-notification" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 px-4 py-6">
-                <div class="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl">
-                    <h3 class="text-lg font-bold text-slate-900">Permohonan telah diluluskan Pelulus</h3>
-                    <div class="mt-4 space-y-2 text-sm text-slate-700">
-                        @foreach($approvalNotifications as $notification)
-                            <div class="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2">
-                                <span class="font-semibold">{{ $notification->nama_syarikat ?: 'Syarikat' }}</span>
-                                <span class="block text-xs text-emerald-700">No. Sijil: {{ $notification->no_sijil_pengecualian }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                    <button type="button" onclick="document.getElementById('jkdm-approval-notification').remove()" class="mt-5 rounded-lg bg-blue-600 px-5 py-2 text-sm font-bold text-white hover:bg-blue-700">Tutup</button>
-                </div>
-            </div>
-        @endif
-
-        <!-- Pengecualian Butiran 58A Header Seksyen -->
         <div class="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-lg shadow-slate-950/10">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 mb-6">
-                <h2 class="text-xl font-bold text-slate-900">
-                    Senarai Permohonan: <span class="text-blue-600">Pengecualian Butiran 58A</span>
+            <div class="grid gap-4 border-b border-slate-100 pb-4 mb-6 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+                <h2 class="text-xl font-bold text-slate-900 sm:justify-self-start">
+                    Status Permohonan: <span class="text-blue-600">{{ $label }}</span>
                 </h2>
-                <span class="mt-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 sm:mt-0">
+                <div class="flex flex-wrap items-center justify-center gap-2 sm:justify-self-center">
+                    <a
+                        href="{{ route('pelulus.status-permohonan') }}"
+                        class="{{ $status === 'Diluluskan' ? 'bg-blue-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }} rounded-lg px-4 py-2 text-sm font-semibold transition"
+                    >
+                        Lulus
+                    </a>
+                    <a
+                        href="{{ route('pelulus.status-permohonan.pending') }}"
+                        class="{{ $status === 'Dalam tindakan' ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }} rounded-lg px-4 py-2 text-sm font-semibold transition"
+                    >
+                        Pending
+                    </a>
+                    <a
+                        href="{{ route('pelulus.status-permohonan.failed') }}"
+                        class="{{ $status === 'Tidak diluluskan' ? 'bg-rose-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200' }} rounded-lg px-4 py-2 text-sm font-semibold transition"
+                    >
+                        Gagal
+                    </a>
+                </div>
+                <span class="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 sm:justify-self-end">
                     {{ $permohonans->count() }} rekod
                 </span>
             </div>
 
-            <!-- Bar Carian Panjang (Format: Cari Nama Syarikat / Negeri/Kawasan/Status/No Sijil/Tarikh) -->
-            <form method="GET" action="{{ route('jkdm.senaraipermohonan') }}" class="mb-6 max-w-5xl">
+            <form method="GET" action="{{ route('pelulus.status-permohonan') }}" class="mb-6 max-w-5xl">
                 <div class="flex items-center overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
                     <span class="whitespace-nowrap border-r border-slate-300 bg-slate-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-600">
                         Cari Nama Syarikat /
@@ -46,8 +48,8 @@
                     <input
                         type="text"
                         name="q"
-                        value="{{ request('q') }}"
-                        placeholder="Negeri/Kawasan/Status/No Sijil/Tarikh"
+                        value="{{ $query }}"
+                        placeholder="Negeri/Kawasan/No Sijil/Tarikh"
                         class="w-full px-4 py-2.5 text-sm focus:outline-none"
                     />
                     <button type="submit" class="flex items-center pr-3 text-slate-400" aria-label="Cari">
@@ -58,12 +60,10 @@
                 </div>
             </form>
 
-            <!-- Kontena Jadual Responsif Luas (Min-width dipanjangkan untuk kolum tambahan) -->
             <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-                <table class="w-full min-w-[1800px] border-collapse text-left text-sm text-slate-600">
+                <table class="w-full min-w-[1400px] border-collapse text-left text-sm text-slate-600">
                     <thead>
                         <tr class="bg-slate-100 font-semibold text-slate-700 uppercase text-xs border-b border-slate-200">
-                            <!-- Maklumat Asal dari Syarikat -->
                             <th class="border-r border-slate-200 p-3">Tarikh Permohonan</th>
                             <th class="border-r border-slate-200 p-3">Negeri</th>
                             <th class="border-r border-slate-200 p-3">Nama Syarikat</th>
@@ -71,17 +71,13 @@
                             <th class="border-r border-slate-200 p-3 text-center">Unit</th>
                             <th class="border-r border-slate-200 p-3 text-center">Kuantiti</th>
                             <th class="border-r border-slate-200 p-3">Kawasan</th>
-                            
-                            <!-- Seksyen: Diisi oleh Kastam (Diwarnakan Biru Lembut) -->
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Status</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">No. Sijil Pengecualian</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tarikh Diluluskan</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tarikh Tamat</th>
-                            <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tempoh Hari</th>
-                            <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Indikator</th>
+                            <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Jumlah Hari Diluluskan</th>
+                            <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Indicator</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900 text-center">Jana Sijil Pengecualian</th>
-                            
-                            <!-- Tindakan Pegawai JKDM -->
                             <th class="p-3 text-center bg-slate-100 text-slate-700">Tindakan</th>
                         </tr>
                     </thead>
@@ -100,9 +96,9 @@
                                 </td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 font-mono text-xs">{{ $permohonan->no_sijil_pengecualian ?? '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
-                                <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_tamat ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
+                                <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_tamat?->format('d/m/Y') ?? '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">
-                                    @if($permohonan->status === 'Diluluskan' && $permohonan->tarikh_diluluskan && $permohonan->tarikh_tamat)
+                                    @if($permohonan->tarikh_diluluskan && $permohonan->tarikh_tamat)
                                         <div class="font-semibold text-slate-900">{{ $permohonan->tempoh_hari_label }}</div>
                                         <div class="text-xs text-slate-500">{{ $permohonan->baki_hari_label }}</div>
                                     @else
@@ -110,7 +106,7 @@
                                     @endif
                                 </td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">
-                                    @if($permohonan->status === 'Diluluskan' && $permohonan->tarikh_diluluskan && $permohonan->tarikh_tamat)
+                                    @if($permohonan->tarikh_diluluskan && $permohonan->tarikh_tamat)
                                         <span class="inline-flex items-center justify-center rounded-full px-2.5 py-1 text-center text-xs font-semibold ring-1 ring-inset {{ $permohonan->tempoh_hari_indicator_class }}">
                                             {{ $permohonan->tempoh_hari_indicator_label }}
                                         </span>
@@ -119,14 +115,14 @@
                                     @endif
                                 </td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 text-center">
-                                    @if($permohonan->status === 'Diluluskan' && filled($permohonan->no_sijil_pengecualian))
-                                        <button type="button" onclick="openCertificatePreview(@js(route('jkdm.permohonan.preview', $permohonan)))" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</button>
+                                    @if(filled($permohonan->no_sijil_pengecualian))
+                                        <button type="button" onclick="openCertificatePreview(@js(route('pelulus.permohonan.preview', $permohonan)))" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</button>
                                     @else
                                         -
                                     @endif
                                 </td>
                                 <td class="p-3 text-center">
-                                    <a href="{{ route('jkdm.permohonan.semak', $permohonan) }}" class="inline-flex items-center rounded-md bg-green-600 px-4 py-1.5 text-xs font-bold text-white shadow-md hover:bg-green-700 transition uppercase tracking-wider">
+                                    <a href="{{ route('pelulus.permohonan.semak', $permohonan) }}" class="inline-flex items-center rounded-md bg-green-600 px-4 py-1.5 text-xs font-bold text-white shadow-md hover:bg-green-700 transition uppercase tracking-wider">
                                         semak
                                     </a>
                                 </td>
@@ -134,7 +130,7 @@
                         @empty
                             <tr>
                                 <td colspan="15" class="p-8 text-center text-sm text-slate-400 italic">
-                                    Tiada rekod permohonan baharu untuk disemak buat masa ini.
+                                    Tiada rekod permohonan {{ strtolower($label) }} buat masa ini.
                                 </td>
                             </tr>
                         @endforelse
@@ -144,5 +140,5 @@
         </div>
     </div>
 
-    @include('partials.certificate-print-modal', ['modalId' => 'jkdm-list-preview-modal', 'frameId' => 'jkdm-list-preview-frame'])
+    @include('partials.certificate-print-modal', ['modalId' => 'pelulus-list-preview-modal', 'frameId' => 'pelulus-list-preview-frame'])
 </x-role-dashboard-layout>

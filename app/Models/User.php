@@ -23,6 +23,7 @@ class User extends Authenticatable
         'nama_syarikat',
         'login_id', // Masukkan login_id
         'role',     // Masukkan role
+        'avatar_path',
         'password',
     ];
 
@@ -32,6 +33,18 @@ class User extends Authenticatable
     public function normalizedRole(): string
     {
         return $this->role;
+    }
+
+    /**
+     * Get the avatar URL for the user, or the default avatar when none exists.
+     */
+    public function avatarUrl(): string
+    {
+        if ($this->avatar_path) {
+            return asset('storage/'.$this->avatar_path);
+        }
+
+        return asset('images/default-user-avatar.svg');
     }
 
     /**

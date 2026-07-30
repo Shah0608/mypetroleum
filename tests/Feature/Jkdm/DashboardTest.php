@@ -6,6 +6,7 @@ use App\Models\LaporanCjp;
 use App\Models\Permohonan58A;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -414,8 +415,62 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($ketuaUnit)->get(route('ketua.senarailaporan'));
 
         $response->assertOk();
-        $response->assertSee('Senarai Laporan: <span class="text-blue-600">CJ(P)</span>', false);
+        $response->assertSee('Senarai Laporan CJ(P) Jadual A-58A', false);
         $response->assertSee('ATIFA TOWAGE AND TRANSPORT SDN BHD', false);
         $response->assertSee('pdf', false);
+    }
+
+    public function test_jkdm_senarai_permohonan_shows_tempoh_hari_for_approved_application(): void
+    {
+        Carbon::setTestNow(Carbon::create(2026, 7, 30, 0, 0, 0));
+
+        $jkdm = User::query()->create([
+            'name' => 'JKDM User',
+            'login_id' => 'jkdm-1',
+            'role' => 'jkdm',
+            'password' => Hash::make('password'),
+        ]);
+
+        $syarikat = User::query()->create([
+            'name' => 'Syarikat User',
+            'login_id' => 'syarikat-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        $permohonan = Permohonan58A::query()->create([
+            'user_id' => $syarikat->id,
+            'nama' => 'Syarikat User',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'ATIFA TOWAGE AND TRANSPORT SDN BHD',
+            'tarikh_permohonan' => '2026-07-21',
+            'no_kelulusan' => 'JKDM-001',
+            'no_pesanan_belian' => 'PO-001',
+            'alamat' => 'Pelabuhan Miri',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Syarikat User',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Diluluskan',
+            'no_sijil_pengecualian' => 'M10-58A-2607-0001',
+            'tarikh_diluluskan' => '2026-07-27',
+            'tarikh_tamat' => '2026-12-31',
+        ]);
+
+        $response = $this->actingAs($jkdm)->get(route('jkdm.senaraipermohonan'));
+
+        $response->assertOk();
+        $response->assertSee('Tempoh Hari', false);
+        $response->assertSee($permohonan->tempoh_hari_label, false);
+        $response->assertSee($permohonan->baki_hari_label, false);
+
+        Carbon::setTestNow();
     }
 }

@@ -18,6 +18,7 @@
         : strtoupper($roleValue);
     $identityLabel = $role === 'syarikat' ? 'Syarikat:' : 'Pengguna:';
     $showBrandLabel = ! in_array($role, ['syarikat', 'admin', 'jkdm', 'pelulus', 'ketua'], true);
+    $avatarUrl = $currentUser?->avatarUrl() ?? asset('images/default-user-avatar.png');
 @endphp
 
 <!DOCTYPE html>
@@ -43,20 +44,64 @@
                     @endif
                 </div>
 
-                <nav class="flex flex-1 min-w-0 items-center justify-center gap-2 overflow-x-auto whitespace-nowrap py-1 text-sm sm:gap-3 lg:gap-4">
-                    @foreach ($navItems as $item)
-                        @php
-                            $isActive = isset($item['route'])
-                                ? request()->routeIs($item['route'])
-                                : request()->is(ltrim($item['active'], '/'));
-                        @endphp
-                        <a
-                            href="{{ $item['url'] }}"
-                            class="{{ $isActive ? 'bg-sky-700 text-white shadow-md shadow-sky-900/20 ring-2 ring-white/70' : 'bg-sky-600 text-white shadow-md shadow-sky-900/20 hover:bg-sky-500' }} rounded-full px-2 py-1.5 font-semibold uppercase tracking-wide transition sm:px-3 sm:py-2"
-                        >
-                            {{ $item['label'] }}
-                        </a>
-                    @endforeach
+                <nav class="relative flex flex-1 min-w-0 items-center justify-center py-1">
+                    <div class="flex min-w-0 items-center justify-center gap-2 overflow-x-auto whitespace-nowrap text-sm sm:gap-3 lg:gap-4">
+                        @foreach ($navItems as $item)
+                            @if (($item['type'] ?? 'link') === 'dropdown')
+                                <div class="relative shrink-0" x-data="{ open: false }" @click.outside="open = false">
+                                @php
+                                    $isActive = collect($item['items'] ?? [])->contains(function (array $child): bool {
+                                        return isset($child['route'])
+                                            ? request()->routeIs($child['route'])
+                                            : request()->is(ltrim($child['active'] ?? '', '/'));
+                                    });
+                                @endphp
+                                <button
+                                    type="button"
+                                    @click="open = !open"
+                                    class="{{ $isActive ? 'bg-sky-700 text-white shadow-md shadow-sky-900/20 ring-2 ring-white/70' : 'bg-sky-600 text-white shadow-md shadow-sky-900/20 hover:bg-sky-500' }} inline-flex items-center gap-2 rounded-full px-2 py-1.5 font-semibold uppercase tracking-wide transition sm:px-3 sm:py-2"
+                                >
+                                    {{ $item['label'] }}
+                                    <svg class="h-4 w-4 transition" :class="open ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.943l3.71-3.712a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0l-4.24-4.24a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+
+                                    <div
+                                        x-show="open"
+                                        x-transition
+                                        class="absolute left-1/2 top-full z-50 mt-2 w-56 -translate-x-1/2 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/15"
+                                    >
+                                        @foreach ($item['items'] ?? [] as $child)
+                                            @php
+                                                $childActive = isset($child['route'])
+                                                    ? request()->routeIs($child['route'])
+                                                    : request()->is(ltrim($child['active'] ?? '', '/'));
+                                            @endphp
+                                            <a
+                                                href="{{ $child['url'] }}"
+                                                class="{{ $childActive ? 'bg-sky-700 text-white' : 'text-slate-700 hover:bg-slate-100' }} block rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                            >
+                                                {{ $child['label'] }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @else
+                                @php
+                                    $isActive = isset($item['route'])
+                                        ? request()->routeIs($item['route'])
+                                        : request()->is(ltrim($item['active'], '/'));
+                                @endphp
+                                <a
+                                    href="{{ $item['url'] }}"
+                                    class="{{ $isActive ? 'bg-sky-700 text-white shadow-md shadow-sky-900/20 ring-2 ring-white/70' : 'bg-sky-600 text-white shadow-md shadow-sky-900/20 hover:bg-sky-500' }} rounded-full px-2 py-1.5 font-semibold uppercase tracking-wide transition sm:px-3 sm:py-2"
+                                >
+                                    {{ $item['label'] }}
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
                 </nav>
 
                 <form method="POST" action="{{ route('logout') }}">
@@ -83,20 +128,98 @@
                         </div>
 
                         <div class="w-full max-w-sm rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-white shadow-lg shadow-slate-950/15 backdrop-blur-sm sm:w-fit">
-                            <div class="space-y-1 text-center sm:text-right">
-                                <div class="text-sm font-semibold tracking-wide text-sky-50">
-                                    {{ $identityLabel }}
+                            <form
+                                method="POST"
+                                action="{{ route('profile.update') }}"
+                                enctype="multipart/form-data"
+                                class="flex items-center gap-4"
+                            >
+                                @csrf
+                                @method('PATCH')
+
+                                <div class="relative group shrink-0">
+                                    <label for="header-avatar" class="block cursor-pointer">
+                                        <img
+                                            id="header-avatar-preview"
+                                            src="{{ $avatarUrl }}"
+                                            alt="Avatar pengguna"
+                                            class="h-20 w-20 rounded-full border-2 border-white/70 object-cover shadow-md transition duration-200 group-hover:scale-105"
+                                        >
+                                    </label>
+                                    <label
+                                        for="header-avatar"
+                                        class="absolute inset-0 flex cursor-pointer items-center justify-center rounded-full bg-black/0 text-center text-[11px] font-semibold leading-tight text-white opacity-0 transition group-hover:bg-black/55 group-hover:opacity-100"
+                                    >
+                                        Hover untuk<br>tukar gambar
+                                    </label>
+                                    <input
+                                        id="header-avatar"
+                                        name="avatar"
+                                        type="file"
+                                        accept="image/*"
+                                        class="hidden"
+                                        onchange="
+                                            (async () => {
+                                                const input = this;
+                                                const [file] = input.files || [];
+                                                const preview = document.getElementById('header-avatar-preview');
+
+                                                if (!file || !preview) {
+                                                    return;
+                                                }
+
+                                                const objectUrl = URL.createObjectURL(file);
+                                                preview.src = objectUrl;
+
+                                                const formData = new FormData(input.form);
+
+                                                try {
+                                                    const response = await fetch(input.form.action, {
+                                                        method: 'POST',
+                                                        headers: {
+                                                            'X-HTTP-Method-Override': 'PATCH',
+                                                            'X-Requested-With': 'XMLHttpRequest',
+                                                            'Accept': 'application/json',
+                                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? '',
+                                                        },
+                                                        body: formData,
+                                                    });
+
+                                                    const data = await response.json();
+
+                                                    if (!response.ok) {
+                                                        throw data;
+                                                    }
+
+                                                    if (data.avatar_url) {
+                                                        preview.src = data.avatar_url;
+                                                    }
+                                                } catch (error) {
+                                                    preview.src = @js($avatarUrl);
+                                                } finally {
+                                                    URL.revokeObjectURL(objectUrl);
+                                                    input.value = '';
+                                                }
+                                            })();
+                                        "
+                                    >
                                 </div>
-                                <div class="text-base font-semibold sm:text-lg">
-                                    {{ $displayName }}
+
+                                <div class="min-w-0 space-y-1 text-left sm:text-right">
+                                    <div class="text-sm font-semibold tracking-wide text-sky-50">
+                                        {{ $identityLabel }}
+                                    </div>
+                                    <div class="text-base font-semibold sm:text-lg">
+                                        {{ $displayName }}
+                                    </div>
+                                    <div class="text-sm font-semibold tracking-wide text-sky-50">
+                                        Level:
+                                    </div>
+                                    <div class="text-sm font-semibold tracking-wide text-sky-50">
+                                        {{ $roleLabel }}
+                                    </div>
                                 </div>
-                                <div class="text-sm font-semibold  tracking-wide text-sky-50">
-                                    Level:
-                                </div>
-                                <div class="text-sm font-semibold  tracking-wide text-sky-50">
-                                    {{ $roleLabel }}
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>

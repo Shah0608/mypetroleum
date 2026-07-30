@@ -6,6 +6,7 @@ use App\Models\Permohonan58A;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
 class PelulusController extends Controller
@@ -84,8 +85,12 @@ class PelulusController extends Controller
     public function applications(): mixed
     {
         $query = trim((string) request()->query('q', ''));
+        $status = trim((string) request()->query('status', ''));
 
         $permohonans = Permohonan58A::with('user')
+            ->when($status !== '', function ($builder) use ($status): void {
+                $builder->where('status', $status);
+            })
             ->when($query !== '', function ($builder) use ($query): void {
                 $builder->where(function ($search) use ($query): void {
                     $search->where('nama_syarikat', 'like', '%'.$query.'%')
@@ -108,7 +113,55 @@ class PelulusController extends Controller
             ->latest()
             ->get();
 
-        return view('pelulus.senaraipermohonan', compact('permohonans', 'query'));
+        return view('pelulus.senaraipermohonan', compact('permohonans', 'query', 'status'));
+    }
+
+    public function approvedApplications(): mixed
+    {
+        return $this->statusApplications('Diluluskan', 'Diluluskan');
+    }
+
+    public function pendingApplications(): mixed
+    {
+        return $this->statusApplications('Dalam tindakan', 'Pending');
+    }
+
+    public function failedApplications(): mixed
+    {
+        return $this->statusApplications('Tidak diluluskan', 'Gagal');
+    }
+
+    /**
+     * @return View
+     */
+    private function statusApplications(string $status, string $label): mixed
+    {
+        $query = trim((string) request()->query('q', ''));
+
+        $permohonans = Permohonan58A::with('user')
+            ->where('status', $status)
+            ->when($query !== '', function ($builder) use ($query): void {
+                $builder->where(function ($search) use ($query): void {
+                    $search->where('nama_syarikat', 'like', '%'.$query.'%')
+                        ->orWhere('negeri', 'like', '%'.$query.'%')
+                        ->orWhere('no_sijil_pengecualian', 'like', '%'.$query.'%')
+                        ->orWhere('no_pesanan_belian', 'like', '%'.$query.'%');
+
+                    if (preg_match('/^\d{4}$/', $query) === 1) {
+                        $search->orWhereYear('tarikh_permohonan', (int) $query)
+                            ->orWhereYear('tarikh_diluluskan', (int) $query);
+                    }
+
+                    if (preg_match('/^(0?[1-9]|1[0-2])$/', $query) === 1) {
+                        $search->orWhereMonth('tarikh_permohonan', (int) $query)
+                            ->orWhereMonth('tarikh_diluluskan', (int) $query);
+                    }
+                });
+            })
+            ->latest()
+            ->get();
+
+        return view('pelulus.status-permohonan', compact('permohonans', 'query', 'status', 'label'));
     }
 
     public function review(Permohonan58A $permohonan): mixed

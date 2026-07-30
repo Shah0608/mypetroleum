@@ -2,9 +2,11 @@
 
 namespace Tests\Feature\Syarikat;
 
+use App\Models\Permohonan58A;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
@@ -186,5 +188,52 @@ class Permohonan58ATest extends TestCase
         $response = $this->actingAs($user)->post(route('syarikat.permohonan-58a.store'), $payload);
 
         $response->assertSessionHasErrors(['pengakuan_ditandatangani']);
+    }
+
+    public function test_syarikat_senarai_permohonan_shows_tempoh_hari_for_approved_application(): void
+    {
+        Carbon::setTestNow(Carbon::create(2026, 7, 30, 0, 0, 0));
+
+        $user = User::query()->create([
+            'name' => 'Test User',
+            'login_id' => 'tester',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        $permohonan = Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Tester',
+            'no_telefon' => '0123456789',
+            'email' => 'tester@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Tester Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-23',
+            'no_kelulusan' => 'JKDM-001',
+            'no_pesanan_belian' => 'PO-001',
+            'alamat' => 'Alamat 1, Kuala Lumpur',
+            'negeri' => 'WP Kuala Lumpur',
+            'tandatangan_nama' => 'Tester',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Diluluskan',
+            'no_sijil_pengecualian' => 'M10-58A-2607-0001',
+            'tarikh_diluluskan' => '2026-07-27',
+            'tarikh_tamat' => '2026-12-31',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('syarikat.senaraipermohonan'));
+
+        $response->assertOk();
+        $response->assertSee('Tempoh Hari', false);
+        $response->assertSee($permohonan->tempoh_hari_label, false);
+        $response->assertSee($permohonan->baki_hari_label, false);
+
+        Carbon::setTestNow();
     }
 }

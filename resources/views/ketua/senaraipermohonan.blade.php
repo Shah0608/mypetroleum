@@ -55,6 +55,8 @@
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">No. Sijil Pengecualian</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tarikh Diluluskan</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tarikh Tamat</th>
+                            <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Tempoh Hari</th>
+                            <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900">Indicator</th>
                             <th class="border-r border-slate-200 p-3 bg-blue-50 text-blue-900 text-center">Jana Sijil Pengecualian</th>
                             <th class="p-3 text-center bg-slate-100 text-slate-700">Tindakan</th>
                         </tr>
@@ -75,6 +77,23 @@
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 font-mono text-xs">{{ $permohonan->no_sijil_pengecualian ?? '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_diluluskan ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_diluluskan)->format('d/m/Y') : '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30">{{ $permohonan->tarikh_tamat ? \Illuminate\Support\Carbon::parse($permohonan->tarikh_tamat)->format('d/m/Y') : '-' }}</td>
+                                <td class="border-r border-slate-200 p-3 bg-blue-50/30">
+                                    @if($permohonan->status === 'Diluluskan' && $permohonan->tarikh_diluluskan && $permohonan->tarikh_tamat)
+                                        <div class="font-semibold text-slate-900">{{ $permohonan->tempoh_hari_label }}</div>
+                                        <div class="text-xs text-slate-500">{{ $permohonan->baki_hari_label }}</div>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td class="border-r border-slate-200 p-3 bg-blue-50/30">
+                                    @if($permohonan->status === 'Diluluskan' && $permohonan->tarikh_diluluskan && $permohonan->tarikh_tamat)
+                                        <span class="inline-flex items-center justify-center rounded-full px-2.5 py-1 text-center text-xs font-semibold ring-1 ring-inset {{ $permohonan->tempoh_hari_indicator_class }}">
+                                            {{ $permohonan->tempoh_hari_indicator_label }}
+                                        </span>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
                                 <td class="border-r border-slate-200 p-3 bg-blue-50/30 text-center">
                                     @if($permohonan->status === 'Diluluskan' && filled($permohonan->no_sijil_pengecualian))
                                         <button type="button" onclick="openCertificatePreview(@js(route('ketua.permohonan.preview', $permohonan)))" class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500">pdf</button>
@@ -90,7 +109,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="13" class="p-8 text-center text-sm text-slate-400 italic">
+                                <td colspan="15" class="p-8 text-center text-sm text-slate-400 italic">
                                     Tiada rekod permohonan baharu untuk disemak buat masa ini.
                                 </td>
                             </tr>

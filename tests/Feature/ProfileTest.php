@@ -4,66 +4,88 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_profile_page_is_displayed(): void
+    public function test_profile_route_redirects_to_the_previous_or_dashboard_page(): void
     {
-        $user = User::factory()->create();
+        $user = User::query()->create([
+            'name' => 'Profile User',
+            'login_id' => 'profile-user-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
 
         $response = $this
             ->actingAs($user)
             ->get('/profile');
 
-        $response->assertOk();
+        $response->assertRedirect(route('dashboard'));
     }
 
-    public function test_profile_information_can_be_updated(): void
+    public function test_profile_information_can_be_updated_from_the_header_avatar_form(): void
     {
-        $user = User::factory()->create();
+        Storage::fake('public');
+
+        $user = User::query()->create([
+            'name' => 'Profile User',
+            'login_id' => 'profile-user-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
 
         $response = $this
             ->actingAs($user)
             ->patch('/profile', [
                 'name' => 'Test User',
-                'email' => 'test@example.com',
+                'avatar' => UploadedFile::fake()->create('avatar.jpg', 100, 'image/jpeg'),
             ]);
 
         $response
             ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
+            ->assertRedirect();
 
         $user->refresh();
 
         $this->assertSame('Test User', $user->name);
-        $this->assertSame('test@example.com', $user->email);
-        $this->assertNull($user->email_verified_at);
+        $this->assertNotNull($user->avatar_path);
+        Storage::disk('public')->assertExists($user->avatar_path);
     }
 
-    public function test_email_verification_status_is_unchanged_when_the_email_address_is_unchanged(): void
+    public function test_dashboard_header_shows_the_avatar_upload_field(): void
     {
-        $user = User::factory()->create();
+        $user = User::query()->create([
+            'name' => 'Profile User',
+            'login_id' => 'profile-user-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
 
         $response = $this
             ->actingAs($user)
-            ->patch('/profile', [
-                'name' => 'Test User',
-                'email' => $user->email,
-            ]);
+            ->get(route('syarikat.utama'));
 
         $response
-            ->assertSessionHasNoErrors()
-            ->assertRedirect('/profile');
-
-        $this->assertNotNull($user->refresh()->email_verified_at);
+            ->assertOk()
+            ->assertSee('name="avatar"', false)
+            ->assertSee('id="header-avatar-preview"', false)
+            ->assertSee('onchange="', false);
     }
 
     public function test_user_can_delete_their_account(): void
     {
-        $user = User::factory()->create();
+        $user = User::query()->create([
+            'name' => 'Profile User',
+            'login_id' => 'profile-user-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
 
         $response = $this
             ->actingAs($user)
@@ -81,7 +103,12 @@ class ProfileTest extends TestCase
 
     public function test_correct_password_must_be_provided_to_delete_account(): void
     {
-        $user = User::factory()->create();
+        $user = User::query()->create([
+            'name' => 'Profile User',
+            'login_id' => 'profile-user-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
 
         $response = $this
             ->actingAs($user)

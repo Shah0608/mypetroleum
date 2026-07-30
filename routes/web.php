@@ -134,6 +134,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->middleware('role:pelulus')->name('pelulus.utama');
     Route::get('/pelulus/senarai-pengguna', [PelulusController::class, 'users'])->middleware('role:pelulus')->name('pelulus.senarai-pengguna');
     Route::get('/pelulus/senaraipermohonan', [PelulusController::class, 'applications'])->middleware('role:pelulus')->name('pelulus.senaraipermohonan');
+    Route::get('/pelulus/status-permohonan', [PelulusController::class, 'approvedApplications'])->middleware('role:pelulus')->name('pelulus.status-permohonan');
+    Route::get('/pelulus/status-permohonan/pending', [PelulusController::class, 'pendingApplications'])->middleware('role:pelulus')->name('pelulus.status-permohonan.pending');
+    Route::get('/pelulus/status-permohonan/gagal', [PelulusController::class, 'failedApplications'])->middleware('role:pelulus')->name('pelulus.status-permohonan.failed');
     Route::get('/pelulus/senaraipermohonan/{permohonan}/semak', [PelulusController::class, 'review'])->middleware('role:pelulus')->name('pelulus.permohonan.semak');
     Route::get('/pelulus/senaraipermohonan/{permohonan}/preview', [PelulusController::class, 'previewApplication'])->middleware('role:pelulus')->name('pelulus.permohonan.preview');
     Route::put('/pelulus/senaraipermohonan/{permohonan}', [PelulusController::class, 'update'])->middleware('role:pelulus')->name('pelulus.permohonan.update');
