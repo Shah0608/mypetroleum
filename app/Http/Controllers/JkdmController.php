@@ -59,8 +59,9 @@ class JkdmController extends Controller
     public function ketuaHome(): mixed
     {
         $jumlahPermohonan = Permohonan58A::query()->count();
+        $jumlahLaporanCjp = LaporanCjp::query()->count();
 
-        return view('ketua.utama', compact('jumlahPermohonan'));
+        return view('ketua.utama', compact('jumlahPermohonan', 'jumlahLaporanCjp'));
     }
 
     public function ketuaApplications(): mixed

@@ -19,11 +19,30 @@
             </div>
         @endif
 
-        <form action="{{ $isEdit ? route('admin.pengguna.update', $user) : route('admin.pengguna.store') }}" method="POST" class="space-y-5">
+        <form
+            action="{{ $isEdit ? route('admin.pengguna.update', $user) : route('admin.pengguna.store') }}"
+            method="POST"
+            class="space-y-5"
+            x-data="{ role: @js(old('role', $user->role ?? 'syarikat')) }"
+        >
             @csrf
             @if($isEdit)
                 @method('PUT')
             @endif
+
+            <label class="block">
+                <span class="text-sm font-semibold text-slate-700">Nama Syarikat</span>
+                <input
+                    type="text"
+                    name="nama_syarikat"
+                    value="{{ old('nama_syarikat', $user->nama_syarikat ?? '') }}"
+                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none disabled:bg-slate-100 disabled:text-slate-400"
+                    x-bind:disabled="role !== 'syarikat'"
+                    x-bind:required="role === 'syarikat'"
+                    placeholder="Role Syarikat Sahaja"
+                >
+                @error('nama_syarikat')<span class="text-sm text-red-600">{{ $message }}</span>@enderror
+            </label> 
 
             <label class="block">
                 <span class="text-sm font-semibold text-slate-700">Nama</span>
@@ -39,8 +58,8 @@
 
             <label class="block">
                 <span class="text-sm font-semibold text-slate-700">Role</span>
-                <select name="role" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none" required>
-                    @foreach(['syarikat' => 'Syarikat', 'jkdm' => 'JKDM', 'ketua_unit_jkdm' => 'KETUA_UNIT(JKDM)', 'pelulus' => 'Pelulus', 'admin' => 'Admin'] as $value => $label)
+                <select name="role" class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 focus:border-blue-500 focus:outline-none" required x-model="role">
+                    @foreach(['syarikat' => 'Syarikat', 'jkdm' => 'JKDM', 'ketua_unit_jkdm' => 'KETUA UNIT (JKDM)', 'pelulus' => 'Pelulus', 'admin' => 'Admin'] as $value => $label)
                         <option value="{{ $value }}" @selected(old('role', $user->role ?? '') === $value)>{{ $label }}</option>
                     @endforeach
                 </select>

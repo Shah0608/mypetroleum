@@ -12,7 +12,7 @@
 >
     <div class="rounded-2xl bg-white/95 p-6 shadow-lg shadow-slate-950/10">
         <div class="mb-5 flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
-            <h2 class="text-xl font-bold text-slate-900">Senarai Laporan CJ(P)</h2>
+            <h2 class="text-xl font-bold text-slate-900">Senarai Laporan CJ(P) Jadual A-58A</h2>
             <a href="{{ route('admin.senarailaporan.export') }}" class="inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-green-700">
                 Muat Turun Excel
             </a>

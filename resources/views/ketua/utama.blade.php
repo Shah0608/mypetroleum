@@ -21,6 +21,10 @@
             <a href="{{ route('ketua.senaraipermohonan') }}" class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900 transition hover:bg-sky-300">
                 Jumlah Permohonan: {{ $jumlahPermohonan ?? 0 }}
             </a>
+
+            <a href="{{ route('ketua.senarailaporan') }}" class="rounded-xl border border-slate-300 bg-sky-200 px-6 py-5 text-center text-[18px] font-medium text-sky-900 transition hover:bg-sky-300">
+                Jumlah Laporan CJ(P): {{ $jumlahLaporanCjp ?? 0 }}
+            </a>
         </div>
     </div>
 </x-role-dashboard-layout>

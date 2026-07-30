@@ -9,10 +9,12 @@
 @php
     $brandLabel = trim($brand . ' ' . strtoupper($role));
     $currentUser = auth()->user();
-    $displayName = $currentUser?->name ?: $currentUser?->login_id ?: 'Pengguna';
     $roleValue = $currentUser?->role ?: $role;
+    $displayName = $roleValue === 'syarikat'
+        ? ($currentUser?->nama_syarikat ?: $currentUser?->name ?: $currentUser?->login_id ?: 'Pengguna')
+        : ($currentUser?->name ?: $currentUser?->login_id ?: 'Pengguna');
     $roleLabel = $roleValue === 'ketua_unit_jkdm'
-        ? 'KETUA_UNIT(JKDM)'
+        ? 'KETUA UNIT (JKDM)'
         : strtoupper($roleValue);
     $identityLabel = $role === 'syarikat' ? 'Syarikat:' : 'Pengguna:';
     $showBrandLabel = ! in_array($role, ['syarikat', 'admin', 'jkdm', 'pelulus', 'ketua'], true);
@@ -108,9 +110,10 @@
 
 
             <footer class="mt-6 bg-slate-900 py-4 text-center text-sm text-white/90">
-                Hakcipta Terpelihara © Jabatan Kastam Diraja Malaysia 2025
+                Hakcipta Terpelihara © Jabatan Kastam Diraja Malaysia 2026
             </footer>
         </main>
     </div>
 </body>
 </html>
+

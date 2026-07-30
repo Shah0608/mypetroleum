@@ -51,28 +51,34 @@ class PelulusController extends Controller
 
         $allPermohonans = Permohonan58A::query()
             ->select(['id', 'user_id', 'nama_syarikat', 'alamat'])
-            ->latest()
+            ->orderBy('created_at')
+            ->orderBy('id')
             ->get();
 
-        $permohonanCountsByCompany = $allPermohonans
-            ->countBy(function (Permohonan58A $permohonan): string {
-                return mb_strtolower(trim((string) $permohonan->nama_syarikat));
-            });
-
         $penggunas = $allPermohonans
-            ->load('user')
-            ->unique('user_id')
+            ->groupBy(function (Permohonan58A $permohonan): string {
+                return mb_strtolower(trim((string) $permohonan->nama_syarikat));
+            })
+            ->map(function ($companyPermohonans): object {
+                $firstPermohonan = $companyPermohonans->first();
+
+                return (object) [
+                    'nama_syarikat' => $firstPermohonan?->nama_syarikat,
+                    'alamat' => $firstPermohonan?->alamat,
+                    'bilangan_permohonan' => $companyPermohonans->count(),
+                    'first_created_at' => $companyPermohonans->min('created_at'),
+                ];
+            })
+            ->sortBy('first_created_at')
             ->values()
             ->when($query !== '', function ($collection) use ($query) {
-                return $collection->filter(function ($permohonan) use ($query): bool {
-                    return str_contains(strtolower((string) $permohonan->nama_syarikat), strtolower($query))
-                        || str_contains(strtolower((string) $permohonan->alamat), strtolower($query))
-                        || str_contains(strtolower((string) $permohonan->user?->name), strtolower($query))
-                        || str_contains(strtolower((string) $permohonan->user?->login_id), strtolower($query));
+                return $collection->filter(function ($company) use ($query): bool {
+                    return str_contains(strtolower((string) $company->nama_syarikat), strtolower($query))
+                        || str_contains(strtolower((string) $company->alamat), strtolower($query));
                 })->values();
             });
 
-        return view('pelulus.senarai-pengguna', compact('penggunas', 'query', 'permohonanCountsByCompany'));
+        return view('pelulus.senarai-pengguna', compact('penggunas', 'query'));
     }
 
     public function applications(): mixed

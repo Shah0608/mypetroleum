@@ -14,7 +14,7 @@
         <div class="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-lg shadow-slate-950/10">
             <!-- Tajuk Utama Borang -->
             <h2 class="mb-6 text-xl font-bold text-slate-900 border-b border-slate-100 pb-4">
-                Laporan CJ(P)
+                Laporan CJ(P) Jadual A-58A
             </h2>
 
             @if (session('success'))
@@ -52,7 +52,7 @@
                         <input 
                             type="text" 
                             name="nama_syarikat"
-                            value="{{ old('nama_syarikat', auth()->user()->name ?? '') }}" 
+                            value="{{ old('nama_syarikat', auth()->user()?->nama_syarikat ?? auth()->user()?->name ?? '') }}" 
                             readonly
                             class="w-full sm:w-2/3 rounded-lg border border-slate-300 bg-slate-100 px-3 py-2 text-slate-700 focus:border-blue-500 focus:outline-none" 
                             required

@@ -367,12 +367,23 @@ class DashboardTest extends TestCase
             'password' => Hash::make('password'),
         ]);
 
+        LaporanCjp::query()->create([
+            'user_id' => $ketuaUnit->id,
+            'negeri' => 'Melaka',
+            'nama_syarikat' => 'Syarikat Ketua',
+            'tahun' => 2026,
+            'bulan' => 'Julai',
+            'fail_path' => null,
+        ]);
+
         $response = $this->actingAs($ketuaUnit)->get(route('ketua.utama'));
 
         $response->assertOk();
         $response->assertDontSee('MyPetroleum KETUA', false);
         $response->assertSee(route('ketua.senarailaporan'), false);
         $response->assertSee(route('ketua.senaraipermohonan'), false);
+        $response->assertSee('Jumlah Permohonan: 0', false);
+        $response->assertSee('Jumlah Laporan CJ(P): 1', false);
     }
 
     public function test_ketua_unit_can_view_senarai_laporan_page(): void

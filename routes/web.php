@@ -115,8 +115,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Haluan Pelulus
     Route::get('/pelulus/utama', function () {
+        $allPermohonans = Permohonan58A::query()
+            ->select(['id', 'nama_syarikat', 'alamat', 'created_at'])
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get();
+
+        $jumlahSyarikat = $allPermohonans
+            ->groupBy(function (Permohonan58A $permohonan): string {
+                return mb_strtolower(trim((string) $permohonan->nama_syarikat));
+            })
+            ->count();
+
         return view('pelulus.utama', [
-            'jumlahPengguna' => Permohonan58A::query()->select('user_id')->distinct()->count('user_id'),
+            'jumlahPengguna' => $jumlahSyarikat,
             'jumlahPermohonan' => Permohonan58A::query()->count(),
         ]);
     })->middleware('role:pelulus')->name('pelulus.utama');
@@ -131,6 +143,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/utama', function () {
         return view('admin.utama', [
             'jumlahPermohonan' => Permohonan58A::query()->count(),
+            'jumlahLaporan' => LaporanCjp::query()->count(),
         ]);
     })->middleware('role:admin')->name('admin.utama');
     Route::get('/admin/uruspengguna', [AdminController::class, 'users'])->middleware('role:admin')->name('admin.uruspengguna');

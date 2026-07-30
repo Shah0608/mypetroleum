@@ -17,6 +17,7 @@ class DashboardTest extends TestCase
     {
         $user = User::query()->create([
             'name' => 'Syarikat User',
+            'nama_syarikat' => 'ATIFA TOWAGE AND TRANSPORT SDN BHD',
             'login_id' => 'syarikat-1',
             'role' => 'syarikat',
             'password' => Hash::make('password'),
@@ -59,6 +60,7 @@ class DashboardTest extends TestCase
         $response->assertOk();
         $response->assertSee(route('syarikat.senaraipermohonan'), false);
         $response->assertSee(route('syarikat.senarailaporan'), false);
+        $response->assertSee('ATIFA TOWAGE AND TRANSPORT SDN BHD', false);
         $response->assertSee('Jumlah Permohonan: 1', false);
         $response->assertSee('Jumlah Laporan CJ(P): 1', false);
     }

@@ -56,6 +56,8 @@ class SenaraiPenggunaTest extends TestCase
         $response->assertOk();
         $response->assertSee('ATIFA TOWAGE AND TRANSPORT SDN BHD', false);
         $response->assertSee('Pelabuhan Miri', false);
+        $response->assertSee('<th class="px-4 py-3">Bil.Permohonan</th>', false);
+        $response->assertSee('<td class="px-4 py-3 text-center font-semibold text-slate-900">1</td>', false);
     }
 
     public function test_pelulus_can_see_bilangan_permohonan_when_same_company_submits_multiple_applications(): void
@@ -109,7 +111,168 @@ class SenaraiPenggunaTest extends TestCase
         $response = $this->actingAs($pelulus)->get(route('pelulus.senarai-pengguna'));
 
         $response->assertOk();
-        $response->assertSee('Bilangan permohonan: 2', false);
+        $response->assertSee('<td class="px-4 py-3 text-center font-semibold text-slate-900">2</td>', false);
+    }
+
+    public function test_pelulus_lists_newer_companies_below_older_companies(): void
+    {
+        $pelulus = User::query()->create([
+            'name' => 'Pelulus',
+            'login_id' => 'pelulus-1',
+            'role' => 'pelulus',
+            'password' => Hash::make('password'),
+        ]);
+
+        $oldCompanyUser = User::query()->create([
+            'name' => 'Syarikat Lama',
+            'login_id' => 'syarikat-lama',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        $newCompanyUser = User::query()->create([
+            'name' => 'Syarikat Baru',
+            'login_id' => 'syarikat-baru',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        Permohonan58A::query()->create([
+            'user_id' => $oldCompanyUser->id,
+            'nama' => 'Syarikat Lama',
+            'no_telefon' => '0123456789',
+            'email' => 'lama@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Lama Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-20',
+            'no_kelulusan' => 'JKDM-001',
+            'no_pesanan_belian' => 'PO-001',
+            'alamat' => 'Alamat Lama',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Syarikat Lama',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Dalam tindakan',
+            'created_at' => '2026-07-20 10:00:00',
+            'updated_at' => '2026-07-20 10:00:00',
+        ]);
+
+        Permohonan58A::query()->create([
+            'user_id' => $newCompanyUser->id,
+            'nama' => 'Syarikat Baru',
+            'no_telefon' => '0123456789',
+            'email' => 'baru@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Baru Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-21',
+            'no_kelulusan' => 'JKDM-002',
+            'no_pesanan_belian' => 'PO-002',
+            'alamat' => 'Alamat Baru',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Syarikat Baru',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Dalam tindakan',
+            'created_at' => '2026-07-21 10:00:00',
+            'updated_at' => '2026-07-21 10:00:00',
+        ]);
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.senarai-pengguna'));
+
+        $response->assertOk();
+        $response->assertSeeInOrder([
+            'Syarikat Lama Sdn Bhd',
+            'Alamat Lama',
+            '<td class="px-4 py-3 text-center font-semibold text-slate-900">1</td>',
+            'Syarikat Baru Sdn Bhd',
+            'Alamat Baru',
+            '<td class="px-4 py-3 text-center font-semibold text-slate-900">1</td>',
+        ], false);
+    }
+
+    public function test_pelulus_groups_multiple_applications_for_same_company_into_one_row(): void
+    {
+        $pelulus = User::query()->create([
+            'name' => 'Pelulus',
+            'login_id' => 'pelulus-1',
+            'role' => 'pelulus',
+            'password' => Hash::make('password'),
+        ]);
+
+        $user = User::query()->create([
+            'name' => 'Pengguna Syarikat',
+            'login_id' => 'syarikat-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'ATIFA TOWAGE AND TRANSPORT SDN BHD',
+            'tarikh_permohonan' => '2026-07-20',
+            'no_kelulusan' => 'JKDM-001',
+            'no_pesanan_belian' => 'PO-001',
+            'alamat' => 'Alamat Pertama',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Dalam tindakan',
+            'created_at' => '2026-07-20 10:00:00',
+            'updated_at' => '2026-07-20 10:00:00',
+        ]);
+
+        Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'ATIFA TOWAGE AND TRANSPORT SDN BHD',
+            'tarikh_permohonan' => '2026-07-21',
+            'no_kelulusan' => 'JKDM-002',
+            'no_pesanan_belian' => 'PO-002',
+            'alamat' => 'Alamat Kedua',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Dalam tindakan',
+            'created_at' => '2026-07-21 10:00:00',
+            'updated_at' => '2026-07-21 10:00:00',
+        ]);
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.senarai-pengguna'));
+
+        $response->assertOk();
+        $response->assertSee('Alamat Pertama', false);
+        $response->assertSee('Bil.Permohonan', false);
+        $response->assertSee('<td class="px-4 py-3 text-center font-semibold text-slate-900">2</td>', false);
+        $response->assertDontSee('Alamat Kedua', false);
     }
 
     public function test_pelulus_review_page_shows_kod_stesen_dropdown_options(): void

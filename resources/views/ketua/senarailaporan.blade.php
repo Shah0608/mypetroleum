@@ -12,7 +12,7 @@
         <div class="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-lg shadow-slate-950/10">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 mb-6">
                 <h2 class="text-xl font-bold text-slate-900">
-                    Senarai Laporan: <span class="text-blue-600">CJ(P)</span>
+                    Senarai Laporan CJ(P) Jadual A-58A</span>
                 </h2>
                 <span class="mt-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 sm:mt-0">
                     {{ $laporans->count() }} rekod
@@ -28,7 +28,7 @@
                         type="text"
                         name="q"
                         value="{{ request('q') }}"
-                        placeholder="Negeri/Nama Syarikat/Bulan/Tahun/ID Pengguna"
+                        placeholder="Negeri/Nama Syarikat/Bulan/Tahun"
                         class="w-full px-4 py-2.5 text-sm focus:outline-none"
                     />
                     <button type="submit" class="flex items-center pr-3 text-slate-400" aria-label="Cari">
@@ -40,14 +40,13 @@
             </form>
 
             <div class="overflow-x-auto rounded-xl border border-slate-200 shadow-sm">
-                <table class="w-full min-w-[1100px] border-collapse text-left text-sm text-slate-600">
+                <table class="w-full min-w-[900px] border-collapse text-left text-sm text-slate-600">
                     <thead>
                         <tr class="bg-slate-100 font-semibold text-slate-700 uppercase text-xs border-b border-slate-200">
                             <th class="border-r border-slate-200 p-3">Negeri</th>
                             <th class="border-r border-slate-200 p-3">Nama Syarikat</th>
                             <th class="border-r border-slate-200 p-3">Tahun</th>
                             <th class="border-r border-slate-200 p-3">Bulan</th>
-                            <th class="border-r border-slate-200 p-3">ID Pengguna</th>
                             <th class="border-r border-slate-200 p-3 text-center">Tarikh Hantar</th>
                             <th class="p-3 text-center">Laporan CJ(P)</th>
                         </tr>
@@ -59,7 +58,6 @@
                                 <td class="border-r border-slate-200 p-3 font-semibold text-slate-900">{{ $laporan->nama_syarikat ?? '-' }}</td>
                                 <td class="border-r border-slate-200 p-3">{{ $laporan->tahun ?? '-' }}</td>
                                 <td class="border-r border-slate-200 p-3">{{ $laporan->bulan ?? '-' }}</td>
-                                <td class="border-r border-slate-200 p-3">{{ $laporan->user?->login_id ?? '-' }}</td>
                                 <td class="border-r border-slate-200 p-3 text-center">{{ $laporan->created_at?->format('d/m/Y') ?? '-' }}</td>
                                 <td class="p-3 text-center">
                                     @if($laporan->fail_path)
@@ -71,7 +69,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="p-8 text-center text-sm text-slate-400 italic">
+                                <td colspan="6" class="p-8 text-center text-sm text-slate-400 italic">
                                     Tiada rekod laporan buat masa ini.
                                 </td>
                             </tr>

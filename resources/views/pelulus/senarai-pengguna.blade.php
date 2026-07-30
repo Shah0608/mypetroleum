@@ -4,14 +4,14 @@
     subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('pelulus.utama'), 'active' => '/pelulus/utama'],
-        ['label' => 'SENARAI PENGGUNA', 'url' => route('pelulus.senarai-pengguna'), 'active' => '/pelulus/senarai-pengguna'],
+        ['label' => 'SENARAI SYARIKAT', 'url' => route('pelulus.senarai-pengguna'), 'active' => '/pelulus/senarai-pengguna'],
         ['label' => 'SENARAI PERMOHONAN', 'url' => route('pelulus.senaraipermohonan'), 'active' => '/pelulus/senaraipermohonan'],
     ]"
 >
     <div class="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-lg shadow-slate-950/10">
         <div class="mb-5 flex flex-col gap-3 border-b border-slate-100 pb-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h2 class="text-xl font-bold text-slate-900">Senarai Pengguna</h2>
+                <h2 class="text-xl font-bold text-slate-900">Senarai Syarikat</h2>
                 <p class="mt-1 text-sm text-slate-500">Paparan berdasarkan permohonan yang telah dihantar.</p>
             </div>
             <span class="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
@@ -45,28 +45,21 @@
                     <tr>
                         <th class="px-4 py-3">Nama Syarikat</th>
                         <th class="px-4 py-3">Alamat Syarikat</th>
+                        <th class="px-4 py-3">Bil.Permohonan</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white">
                     @forelse($penggunas as $permohonan)
                         <tr>
                             <td class="px-4 py-3 font-semibold text-slate-900">
-                                <div>{{ $permohonan->nama_syarikat ?? '-' }}</div>
-                                @php
-                                    $companyKey = mb_strtolower(trim((string) $permohonan->nama_syarikat));
-                                    $companyApplicationCount = $permohonanCountsByCompany[$companyKey] ?? 0;
-                                @endphp
-                                @if($companyApplicationCount > 1)
-                                    <div class="mt-1 text-xs font-medium text-slate-500">
-                                        Bilangan permohonan: {{ $companyApplicationCount }}
-                                    </div>
-                                @endif
+                                {{ $permohonan->nama_syarikat ?? '-' }}
                             </td>
                             <td class="px-4 py-3">{{ $permohonan->alamat ?? '-' }}</td>
+                            <td class="px-4 py-3 text-center font-semibold text-slate-900">{{ $permohonan->bilangan_permohonan }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="2" class="px-4 py-8 text-center text-slate-400">Tiada rekod permohonan ditemui.</td>
+                            <td colspan="3" class="px-4 py-8 text-center text-slate-400">Tiada rekod permohonan ditemui.</td>
                         </tr>
                     @endforelse
                 </tbody>

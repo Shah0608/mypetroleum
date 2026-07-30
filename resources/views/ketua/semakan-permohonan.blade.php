@@ -16,7 +16,7 @@
         @endif
 
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-950/10">
-            <h2 class="mb-4 border-b border-slate-100 pb-3 text-xl font-bold text-slate-900">Maklumat Permohonan</h2>
+            <h2 class="mb-6 inline-flex rounded-md bg-slate-700 px-12 py-2 text-lg font-semibold uppercase text-white shadow">Maklumat Permohonan</h2>
             @include('partials.permohonan-58a-readonly', ['permohonan' => $permohonan])
         </div>
 
@@ -55,7 +55,7 @@
             @method('PUT')
             <input type="hidden" name="review_section" value="ketua_unit">
 
-            <div class="mb-6 inline-flex rounded-md bg-slate-700 px-12 py-2 text-lg font-semibold uppercase text-white shadow">
+            <div class="mb-6 inline-flex rounded-md bg-blue-500 px-12 py-2 text-lg font-semibold uppercase text-white shadow">
                 Ulasan Ketua Unit/Cawangan
             </div>
 
@@ -86,7 +86,7 @@
             </div>
 
             <div class="mt-6 flex flex-wrap gap-3">
-                <button type="submit" class="rounded-lg bg-orange-600 px-10 py-2.5 font-bold text-white shadow hover:bg-orange-700">Hantar</button>
+                <button type="submit" class="rounded-lg bg-emerald-600 px-10 py-2.5 font-bold text-white shadow hover:bg-emerald-700">Hantar</button>
                 <a href="{{ route('ketua.senaraipermohonan') }}" class="rounded-lg bg-blue-500 px-10 py-2.5 font-bold text-white shadow hover:bg-blue-600">Kembali</a>
             </div>
         </form>

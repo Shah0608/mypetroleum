@@ -4,7 +4,7 @@
     subtitle="Sistem Maklumat Bunker Petroleum"
     :nav-items="[
         ['label' => 'UTAMA', 'url' => route('pelulus.utama'), 'active' => '/pelulus/utama'],
-        ['label' => 'SENARAI PENGGUNA', 'url' => route('pelulus.senarai-pengguna'), 'active' => '/pelulus/senarai-pengguna'],
+        ['label' => 'SENARAI SYARIKAT', 'url' => route('pelulus.senarai-pengguna'), 'active' => '/pelulus/senarai-pengguna'],
         ['label' => 'SENARAI PERMOHONAN', 'url' => route('pelulus.senaraipermohonan'), 'active' => '/pelulus/senaraipermohonan'],
     ]"
 >
@@ -47,7 +47,7 @@
         @endif
 
         <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-950/10">
-            <h2 class="mb-4 border-b border-slate-100 pb-3 text-xl font-bold text-slate-900">Maklumat Permohonan</h2>
+            <h2 class="mb-6 inline-flex rounded-md bg-slate-700 px-12 py-2 text-lg font-semibold uppercase text-white shadow">Maklumat Permohonan</h2>
             @include('partials.permohonan-58a-readonly', ['permohonan' => $permohonan])
         </div>
 

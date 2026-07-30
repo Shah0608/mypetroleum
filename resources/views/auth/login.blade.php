@@ -13,9 +13,19 @@
         </div>
 
         <div class="rounded-[28px] border border-slate-200 bg-slate-50 p-6 shadow-sm shadow-slate-900/5">
-            <div class="text-center">
-                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
-                    <span class="text-lg">🔒</span>
+            @php
+                $returnUrl = url()->previous();
+                if (blank($returnUrl) || $returnUrl === route('login')) {
+                    $returnUrl = url('/');
+                }
+            @endphp
+
+            <div class="flex items-center justify-center gap-3">
+                <a href="{{ $returnUrl }}" class="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
+                    Kembali
+                </a>
+
+                <span class="inline-flex items-center rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
                     Log Masuk
                 </span>
             </div>
@@ -42,7 +52,7 @@
                     <select id="user_type" name="user_type" class="mt-1 block w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-1 ring-slate-200 transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20">
                         <option value="syarikat">SYARIKAT/PEMILIK</option>
                         <option value="jkdm">PEGAWAI JKDM</option>
-                        <option value="ketua_unit_jkdm">KETUA_UNIT(JKDM)</option>
+                        <option value="ketua_unit_jkdm">KETUA UNIT (JKDM)</option>
                         <option value="pelulus">PELULUS</option>
                         <option value="admin">ADMIN</option>
                     </select>
@@ -53,24 +63,11 @@
                         {{ __('Log Masuk') }}
                     </x-primary-button>
                 </div>
-
-                @php
-                    $returnUrl = url()->previous();
-                    if (blank($returnUrl) || $returnUrl === route('login')) {
-                        $returnUrl = url('/');
-                    }
-                @endphp
-
-                <div>
-                    <a href="{{ $returnUrl }}" class="flex w-full items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50">
-                        Kembali
-                    </a>
-                </div>
             </form>
         </div>
 
         <p class="text-center text-sm leading-6 text-slate-500">
-            Sistem Maklumat Pembekal Kapal Petroleum<br>
+            Sistem Maklumat Bunker Petroleum<br>
             Jabatan Kastam Diraja Malaysia. Melaka
         </p>
     </div>

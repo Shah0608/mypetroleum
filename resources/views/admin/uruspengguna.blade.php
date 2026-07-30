@@ -45,6 +45,7 @@
                 <thead class="bg-slate-100 text-left text-xs uppercase text-slate-700">
                     <tr>
                         <th class="px-4 py-3">Nama</th>
+                        <th class="px-4 py-3">Nama Syarikat</th>
                         <th class="px-4 py-3">Login ID</th>
                         <th class="px-4 py-3">Role</th>
                         <th class="px-4 py-3 text-center">Tindakan</th>
@@ -54,6 +55,7 @@
                     @forelse($users as $user)
                         <tr>
                             <td class="px-4 py-3 font-semibold text-slate-900">{{ $user->name }}</td>
+                            <td class="px-4 py-3">{{ $user->role === 'syarikat' ? ($user->nama_syarikat ?: '-') : '-' }}</td>
                             <td class="px-4 py-3">{{ $user->login_id }}</td>
                             <td class="px-4 py-3 uppercase">{{ $user->role }}</td>
                             <td class="px-4 py-3">
@@ -68,7 +70,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="px-4 py-8 text-center text-slate-400">Tiada pengguna dijumpai.</td></tr>
+                        <tr><td colspan="5" class="px-4 py-8 text-center text-slate-400">Tiada pengguna dijumpai.</td></tr>
                     @endforelse
                 </tbody>
             </table>

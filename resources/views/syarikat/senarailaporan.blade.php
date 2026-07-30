@@ -15,7 +15,7 @@
             <!-- Tajuk Bahagian (Sama seperti paparan visual) -->
             <div class="border-b border-slate-100 pb-4 mb-6">
                 <h2 class="text-xl font-bold text-slate-900">
-                    Senarai Laporan CJ(P)
+                    Senarai Laporan CJ(P) Jadual A-58A
                 </h2>
             </div>
 

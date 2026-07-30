@@ -11,13 +11,16 @@ class LaporanCjpController extends Controller
 {
     public function store(Request $request): RedirectResponse
     {
+        $companyName = $request->user()?->nama_syarikat ?: $request->user()?->name;
+
         $data = $request->validate([
             'negeri' => ['required', 'string', 'max:100'],
-            'nama_syarikat' => ['required', 'string', 'max:255'],
             'tahun' => ['required', 'integer', 'between:2000,2100'],
             'bulan' => ['required', 'string', 'max:30'],
             'fail' => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
         ]);
+
+        $data['nama_syarikat'] = $companyName;
 
         if ($request->hasFile('fail')) {
             $data['fail_path'] = $request->file('fail')->store('laporan-cjp', 'public');
