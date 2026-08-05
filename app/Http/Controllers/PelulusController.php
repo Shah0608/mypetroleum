@@ -6,6 +6,8 @@ use App\Models\Permohonan58A;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -85,11 +87,78 @@ class PelulusController extends Controller
     public function applications(): mixed
     {
         $query = trim((string) request()->query('q', ''));
-        $status = trim((string) request()->query('status', ''));
+        $status = trim((string) request()->query('status', 'semua'));
+        $permohonans = $this->filteredApplications($query, $status);
+
+        return view('pelulus.senaraipermohonan', compact('permohonans', 'query', 'status'));
+    }
+
+    public function exportApplications(Request $request): Response
+    {
+        $query = trim((string) $request->query('q', ''));
+        $status = trim((string) $request->query('status', 'semua'));
+        $permohonans = $this->filteredApplications($query, $status);
+        $filename = 'senarai-permohonan-58a-'.now()->format('Ymd-His').'.xls';
+
+        $headers = [
+            'Content-Type' => 'application/vnd.ms-excel; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ];
+
+        $columns = [
+            'Tarikh Permohonan',
+            'Negeri',
+            'Nama Syarikat',
+            'Perihal Barangan',
+            'Unit',
+            'Kuantiti',
+            'Kawasan',
+            'Status',
+            'No. Sijil Pengecualian',
+            'Tarikh Diluluskan',
+            'Tarikh Tamat',
+            'Jumlah Hari Diluluskan',
+            'Indicator',
+        ];
+
+        $rows = $permohonans->map(function (Permohonan58A $permohonan): array {
+            $barangs = collect($permohonan->barangs);
+
+            return [
+                $this->formatDateCell($permohonan->tarikh_permohonan),
+                (string) ($permohonan->negeri ?? '-'),
+                (string) ($permohonan->nama_syarikat ?? '-'),
+                $barangs->pluck('perihal')->filter()->join(', ') ?: '-',
+                $barangs->pluck('unit')->filter()->join(', ') ?: '-',
+                $barangs->pluck('kuantiti')->filter()->join(', ') ?: '-',
+                $barangs->pluck('kawasan')->filter()->join(', ') ?: '-',
+                (string) ($permohonan->status ?? '-'),
+                (string) ($permohonan->no_sijil_pengecualian ?? '-'),
+                $this->formatDateCell($permohonan->tarikh_diluluskan),
+                $this->formatDateCell($permohonan->tarikh_tamat),
+                $permohonan->status === 'Diluluskan' && $permohonan->tarikh_diluluskan && $permohonan->tarikh_tamat
+                    ? $permohonan->tempoh_hari_label
+                    : '-',
+                $permohonan->status === 'Diluluskan' && $permohonan->tarikh_diluluskan && $permohonan->tarikh_tamat
+                    ? $permohonan->tempoh_hari_indicator_label
+                    : '-',
+            ];
+        });
+
+        $output = $this->buildExcelTable($columns, $rows->all(), $query, $status);
+
+        return response($output, 200, $headers);
+    }
+
+    public function printApplications(Request $request): Response
+    {
+        $query = trim((string) $request->query('q', ''));
+        $status = trim((string) $request->query('status', 'semua'));
+        $statusFilter = $this->normalizeApplicationStatusFilter($status);
 
         $permohonans = Permohonan58A::with('user')
-            ->when($status !== '', function ($builder) use ($status): void {
-                $builder->where('status', $status);
+            ->when($statusFilter !== null, function ($builder) use ($statusFilter): void {
+                $builder->where('status', $statusFilter);
             })
             ->when($query !== '', function ($builder) use ($query): void {
                 $builder->where(function ($search) use ($query): void {
@@ -110,10 +179,20 @@ class PelulusController extends Controller
                     }
                 });
             })
-            ->latest()
+            ->when($status === 'semua', function ($builder): void {
+                $builder->orderByRaw("CASE status WHEN 'Diluluskan' THEN 1 WHEN 'Dalam tindakan' THEN 2 WHEN 'Tidak diluluskan' THEN 3 ELSE 4 END")
+                    ->latest();
+            }, function ($builder): void {
+                $builder->latest();
+            })
             ->get();
 
-        return view('pelulus.senaraipermohonan', compact('permohonans', 'query', 'status'));
+        return response()->view('pelulus.senaraipermohonan-print', [
+            'permohonans' => $permohonans,
+            'query' => $query,
+            'status' => $status,
+            'selectedStatusLabel' => $this->applicationStatusLabel($status),
+        ]);
     }
 
     public function approvedApplications(): mixed
@@ -162,6 +241,103 @@ class PelulusController extends Controller
             ->get();
 
         return view('pelulus.status-permohonan', compact('permohonans', 'query', 'status', 'label'));
+    }
+
+    private function normalizeApplicationStatusFilter(string $status): ?string
+    {
+        return match ($status) {
+            'diluluskan' => 'Diluluskan',
+            'dalam_tindakan' => 'Dalam tindakan',
+            'tidak_diluluskan' => 'Tidak diluluskan',
+            default => null,
+        };
+    }
+
+    private function applicationStatusLabel(string $status): string
+    {
+        return match ($status) {
+            'diluluskan' => 'Diluluskan',
+            'dalam_tindakan' => 'Dalam Tindakan',
+            'tidak_diluluskan' => 'Tidak Diluluskan',
+            default => 'Semua',
+        };
+    }
+
+    /**
+     * @return Collection<int, Permohonan58A>
+     */
+    private function filteredApplications(string $query, string $status): Collection
+    {
+        $statusFilter = $this->normalizeApplicationStatusFilter($status);
+
+        return Permohonan58A::with('user')
+            ->when($statusFilter !== null, function ($builder) use ($statusFilter): void {
+                $builder->where('status', $statusFilter);
+            })
+            ->when($query !== '', function ($builder) use ($query): void {
+                $builder->where(function ($search) use ($query): void {
+                    $search->where('nama_syarikat', 'like', '%'.$query.'%')
+                        ->orWhere('negeri', 'like', '%'.$query.'%')
+                        ->orWhere('status', 'like', '%'.$query.'%')
+                        ->orWhere('no_sijil_pengecualian', 'like', '%'.$query.'%')
+                        ->orWhere('no_pesanan_belian', 'like', '%'.$query.'%');
+
+                    if (preg_match('/^\d{4}$/', $query) === 1) {
+                        $search->orWhereYear('tarikh_permohonan', (int) $query)
+                            ->orWhereYear('tarikh_diluluskan', (int) $query);
+                    }
+
+                    if (preg_match('/^(0?[1-9]|1[0-2])$/', $query) === 1) {
+                        $search->orWhereMonth('tarikh_permohonan', (int) $query)
+                            ->orWhereMonth('tarikh_diluluskan', (int) $query);
+                    }
+                });
+            })
+            ->latest()
+            ->get();
+    }
+
+    private function formatDateCell(?Carbon $date): string
+    {
+        return $date?->format('d/m/Y') ?? '-';
+    }
+
+    /**
+     * @param  array<int, string>  $columns
+     * @param  array<int, array<int, string>>  $rows
+     */
+    private function buildExcelTable(array $columns, array $rows, string $query, string $status): string
+    {
+        $html = '<html><head><meta charset="UTF-8"></head><body>';
+        $html .= '<table border="1">';
+        $html .= '<tr><th colspan="'.count($columns).'">Senarai Permohonan Pengecualian Butiran 58A</th></tr>';
+        $html .= '<tr><th colspan="'.count($columns).'">Status: '.$this->applicationStatusLabel($status).($query !== '' ? ' | Carian: '.$query : '').'</th></tr>';
+        $html .= '<tr>';
+
+        foreach ($columns as $column) {
+            $html .= '<th>'.$this->escapeExcelValue($column).'</th>';
+        }
+
+        $html .= '</tr>';
+
+        foreach ($rows as $row) {
+            $html .= '<tr>';
+
+            foreach ($row as $cell) {
+                $html .= '<td>'.$this->escapeExcelValue($cell).'</td>';
+            }
+
+            $html .= '</tr>';
+        }
+
+        $html .= '</table></body></html>';
+
+        return $html;
+    }
+
+    private function escapeExcelValue(string $value): string
+    {
+        return e($value);
     }
 
     public function review(Permohonan58A $permohonan): mixed

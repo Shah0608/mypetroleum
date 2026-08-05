@@ -6,23 +6,52 @@
         ['label' => 'UTAMA', 'url' => route('pelulus.utama'), 'active' => '/pelulus/utama'],
         ['label' => 'SENARAI SYARIKAT', 'url' => route('pelulus.senarai-pengguna'), 'active' => '/pelulus/senarai-pengguna'],
         ['label' => 'SENARAI PERMOHONAN', 'url' => route('pelulus.senaraipermohonan'), 'active' => '/pelulus/senaraipermohonan'],
-        ['label' => 'STATUS', 'url' => route('pelulus.status-permohonan'), 'active' => '/pelulus/status-permohonan'],
     ]"
 >
     <div class="space-y-6">
         <!-- Pengecualian Butiran 58A Header Seksyen -->
         <div class="rounded-2xl border border-slate-200 bg-white/95 p-6 shadow-lg shadow-slate-950/10">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 mb-6">
-                <h2 class="text-xl font-bold text-slate-900">
-                    Senarai Permohonan: <span class="text-blue-600">Pengecualian Butiran 58A</span>
-                </h2>
-                <span class="mt-2 rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 sm:mt-0">
-                    {{ $permohonans->count() }} rekod
-                </span>
-            </div>
+            <form method="GET" action="{{ route('pelulus.senaraipermohonan') }}" class="mb-6 space-y-4">
+                <div class="flex flex-col gap-4 border-b border-slate-100 pb-4 lg:flex-row lg:items-center lg:justify-between">
+                    <h2 class="text-xl font-bold text-slate-900">
+                        Senarai Permohonan: <span class="text-blue-600">Pengecualian Butiran 58A</span>
+                    </h2>
 
-            <!-- Bar Carian Panjang (Format: Cari Nama Syarikat / Negeri/Kawasan/Status/No Sijil/Tarikh) -->
-            <form method="GET" action="{{ route('pelulus.senaraipermohonan') }}" class="mb-6 max-w-5xl">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <select
+                            name="status"
+                            class="min-w-44 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+                        >
+                            <option value="semua" @selected($status === 'semua')>Semua</option>
+                            <option value="diluluskan" @selected($status === 'diluluskan')>Diluluskan</option>
+                            <option value="dalam_tindakan" @selected($status === 'dalam_tindakan')>Dalam Tindakan</option>
+                            <option value="tidak_diluluskan" @selected($status === 'tidak_diluluskan')>Tidak Diluluskan</option>
+                        </select>
+
+                        <span class="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700">
+                            {{ $permohonans->count() }} Rekod Dijumpai
+                        </span>
+
+                        <button
+                            type="submit"
+                            formaction="{{ route('pelulus.senaraipermohonan.print') }}"
+                            formtarget="_blank"
+                            class="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700"
+                        >
+                            Print
+                        </button>
+
+                        <button
+                            type="submit"
+                            formaction="{{ route('pelulus.senaraipermohonan.export') }}"
+                            class="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-500"
+                        >
+                            Excel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bar Carian Panjang (Format: Cari Nama Syarikat / Negeri/Kawasan/Status/No Sijil/Tarikh) -->
                 <div class="flex items-center overflow-hidden rounded-xl border border-slate-300 bg-white shadow-sm">
                     <span class="whitespace-nowrap border-r border-slate-300 bg-slate-100 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-600">
                         Cari Nama Syarikat /
@@ -118,7 +147,7 @@
                         @empty
                             <tr>
                                 <td colspan="15" class="p-8 text-center text-sm text-slate-400 italic">
-                                    Tiada rekod permohonan baharu untuk disemak buat masa ini.
+                                    Tiada rekod permohonan untuk dipaparkan buat masa ini.
                                 </td>
                             </tr>
                         @endforelse

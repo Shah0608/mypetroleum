@@ -13,10 +13,15 @@
     $displayName = $roleValue === 'syarikat'
         ? ($currentUser?->nama_syarikat ?: $currentUser?->name ?: $currentUser?->login_id ?: 'Pengguna')
         : ($currentUser?->name ?: $currentUser?->login_id ?: 'Pengguna');
-    $roleLabel = $roleValue === 'ketua_unit_jkdm'
-        ? 'KETUA UNIT (JKDM)'
-        : strtoupper($roleValue);
-    $identityLabel = $role === 'syarikat' ? 'Syarikat:' : 'Pengguna:';
+    $roleLabel = $currentUser?->roleLabel() ?? match ($roleValue) {
+        'syarikat' => 'Pemohon',
+        'jkdm' => 'Pegawai Verifikasi',
+        'ketua_unit_jkdm' => 'Pegawai Penyokong',
+        'pelulus' => 'Pegawai Pelulus',
+        'admin' => 'Admin',
+        default => ucfirst(str_replace('_', ' ', $roleValue)),
+    };
+    $identityLabel = $role === 'syarikat' ? 'Pemohon:' : 'Pengguna:';
     $showBrandLabel = ! in_array($role, ['syarikat', 'admin', 'jkdm', 'pelulus', 'ketua'], true);
     $avatarUrl = $currentUser?->avatarUrl() ?? asset('images/default-user-avatar.png');
 @endphp
@@ -27,6 +32,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>
+        (() => {
+            const storageKey = 'mypetroleum-theme';
+            const storedTheme = localStorage.getItem(storageKey);
+            const preferredTheme = storedTheme ?? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+            document.documentElement.classList.toggle('dark', preferredTheme === 'dark');
+        })();
+    </script>
     <title>{{ config('app.name', 'MyPetroleum') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -34,14 +48,23 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="font-sans antialiased">
-<div class="min-h-screen bg-sky-700 text-slate-900">
+<body class="font-sans antialiased bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+<div class="min-h-screen bg-sky-700 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
     <div class="border-b border-black bg-black text-white shadow-lg" style="background-color: #000000;">
             <div class="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
                     @if ($showBrandLabel)
                         <div class="text-2xl font-semibold tracking-tight">{{ $brandLabel }}</div>
                     @endif
+                    <button
+                        type="button"
+                        data-theme-toggle
+                        class="inline-flex items-center gap-2 rounded-full bg-slate-700 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-md transition hover:bg-slate-600"
+                        aria-label="Tukar mod tema"
+                    >
+                        <span data-theme-icon>☀</span>
+                        <span data-theme-label>Light</span>
+                    </button>
                 </div>
 
                 <nav class="relative flex flex-1 min-w-0 items-center justify-center py-1">
@@ -114,7 +137,7 @@
         </div>
 
         <main class="mx-auto max-w-[1200px] px-4 py-5 sm:px-6 lg:px-8">
-            <section class="rounded-3xl bg-sky-700 px-3 py-3 text-white">
+            <section class="rounded-3xl bg-sky-700 px-3 py-3 text-white transition-colors duration-300 dark:bg-slate-900">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
                     <div class="flex items-center gap-3 sm:gap-4">
                         <img src="{{ asset('images/kastam-diraja-malaysia-seeklogo.png') }}" alt="Logo Kastam Diraja Malaysia" class="h-14 w-14 shrink-0 object-contain sm:h-20 sm:w-20" />
@@ -206,16 +229,16 @@
                                 </div>
 
                                 <div class="min-w-0 space-y-1 text-left sm:text-right">
-                                    <div class="text-sm font-semibold tracking-wide text-sky-50">
+                                    <div class="text-sm font-bold tracking-wide text-sky-50">
                                         {{ $identityLabel }}
                                     </div>
-                                    <div class="text-base font-semibold sm:text-lg">
+                                    <div class="text-base font-bold sm:text-lg">
                                         {{ $displayName }}
                                     </div>
-                                    <div class="text-sm font-semibold tracking-wide text-sky-50">
+                                    <div class="text-sm font-bold tracking-wide text-sky-50">
                                         Level:
                                     </div>
-                                    <div class="text-sm font-semibold tracking-wide text-sky-50">
+                                    <div class="text-sm font-bold tracking-wide text-sky-50">
                                         {{ $roleLabel }}
                                     </div>
                                 </div>
@@ -225,8 +248,8 @@
                 </div>
             </section>
 
-            <section class="mt-6 rounded-2xl border border-slate-300 bg-white px-5 py-8 shadow-lg shadow-slate-950/15 sm:px-6 lg:px-8">
-                <div class="space-y-6 text-[17px] leading-8 text-slate-900">
+            <section class="mt-6 rounded-2xl border border-slate-300 bg-white px-5 py-8 shadow-lg shadow-slate-950/15 transition-colors duration-300 dark:border-slate-800 dark:bg-slate-900 sm:px-6 lg:px-8">
+                <div class="space-y-6 text-[17px] leading-8 text-slate-900 dark:text-slate-100">
                     {{ $slot }}
                 </div>
             </section>
@@ -237,6 +260,31 @@
             </footer>
         </main>
     </div>
+    <script>
+        (() => {
+            const storageKey = 'mypetroleum-theme';
+            const toggle = document.querySelector('[data-theme-toggle]');
+            const icon = document.querySelector('[data-theme-icon]');
+            const label = document.querySelector('[data-theme-label]');
+
+            if (!toggle || !icon || !label) {
+                return;
+            }
+
+            const sync = () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                icon.textContent = isDark ? '☾' : '☀';
+                label.textContent = isDark ? 'Dark' : 'Light';
+            };
+
+            toggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem(storageKey, isDark ? 'dark' : 'light');
+                sync();
+            });
+
+            sync();
+        })();
+    </script>
 </body>
 </html>
-

@@ -6,7 +6,6 @@
         ['label' => 'UTAMA', 'url' => route('pelulus.utama'), 'active' => '/pelulus/utama'],
         ['label' => 'SENARAI SYARIKAT', 'url' => route('pelulus.senarai-pengguna'), 'active' => '/pelulus/senarai-pengguna'],
         ['label' => 'SENARAI PERMOHONAN', 'url' => route('pelulus.senaraipermohonan'), 'active' => '/pelulus/senaraipermohonan'],
-        ['label' => 'STATUS', 'url' => route('pelulus.status-permohonan'), 'active' => '/pelulus/status-permohonan'],
     ]"
 >
     <div class="space-y-8">

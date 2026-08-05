@@ -357,4 +357,254 @@ class UtamaTest extends TestCase
         $response->assertSee('SENARAI PERMOHONAN', false);
         $response->assertSee('STATUS', false);
     }
+
+    public function test_pelulus_senarai_permohonan_can_filter_by_status(): void
+    {
+        $pelulus = User::query()->create([
+            'name' => 'Pelulus',
+            'login_id' => 'pelulus-1',
+            'role' => 'pelulus',
+            'password' => Hash::make('password'),
+        ]);
+
+        $user = User::query()->create([
+            'name' => 'Pengguna Syarikat',
+            'login_id' => 'syarikat-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Lulus Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-21',
+            'no_kelulusan' => 'JKDM-001',
+            'no_pesanan_belian' => 'PO-001',
+            'alamat' => 'Alamat Lulus',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Diluluskan',
+        ]);
+
+        Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Tindakan Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-22',
+            'no_kelulusan' => 'JKDM-002',
+            'no_pesanan_belian' => 'PO-002',
+            'alamat' => 'Alamat Tindakan',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Dalam tindakan',
+        ]);
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.senaraipermohonan', ['status' => 'diluluskan']));
+
+        $response->assertOk();
+        $response->assertSee('Syarikat Lulus Sdn Bhd', false);
+        $response->assertDontSee('Syarikat Tindakan Sdn Bhd', false);
+        $response->assertSee('value="diluluskan" selected', false);
+    }
+
+    public function test_pelulus_can_export_filtered_senarai_permohonan_to_excel_compatible_file(): void
+    {
+        $pelulus = User::query()->create([
+            'name' => 'Pelulus',
+            'login_id' => 'pelulus-1',
+            'role' => 'pelulus',
+            'password' => Hash::make('password'),
+        ]);
+
+        $user = User::query()->create([
+            'name' => 'Pengguna Syarikat',
+            'login_id' => 'syarikat-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Lulus Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-21',
+            'no_kelulusan' => 'JKDM-001',
+            'no_pesanan_belian' => 'PO-001',
+            'alamat' => 'Alamat Lulus',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [
+                [
+                    'perihal' => 'Minyak',
+                    'unit' => 'LITER',
+                    'kuantiti' => '1000',
+                    'kawasan' => 'Port Klang',
+                ],
+            ],
+            'attachments' => [],
+            'status' => 'Diluluskan',
+            'tarikh_diluluskan' => '2026-07-22',
+            'tarikh_tamat' => '2028-07-22',
+            'no_sijil_pengecualian' => 'M10-58A-2607-0001',
+        ]);
+
+        Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Tindakan Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-23',
+            'no_kelulusan' => 'JKDM-002',
+            'no_pesanan_belian' => 'PO-002',
+            'alamat' => 'Alamat Tindakan',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Dalam tindakan',
+        ]);
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.senaraipermohonan.export', ['status' => 'diluluskan']));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'application/vnd.ms-excel; charset=UTF-8');
+        $response->assertHeader('content-disposition');
+        $response->assertSee('Syarikat Lulus Sdn Bhd', false);
+        $response->assertDontSee('Syarikat Tindakan Sdn Bhd', false);
+        $response->assertSee('Status: Diluluskan', false);
+    }
+
+    public function test_pelulus_print_page_sorts_all_records_by_status_and_excludes_actions_columns(): void
+    {
+        $pelulus = User::query()->create([
+            'name' => 'Pelulus',
+            'login_id' => 'pelulus-1',
+            'role' => 'pelulus',
+            'password' => Hash::make('password'),
+        ]);
+
+        $user = User::query()->create([
+            'name' => 'Pengguna Syarikat',
+            'login_id' => 'syarikat-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        $approved = Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Lulus Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-21',
+            'no_kelulusan' => 'JKDM-001',
+            'no_pesanan_belian' => 'PO-001',
+            'alamat' => 'Alamat Lulus',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Diluluskan',
+        ]);
+
+        $pending = Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Tindakan Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-22',
+            'no_kelulusan' => 'JKDM-002',
+            'no_pesanan_belian' => 'PO-002',
+            'alamat' => 'Alamat Tindakan',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Dalam tindakan',
+        ]);
+
+        $failed = Permohonan58A::query()->create([
+            'user_id' => $user->id,
+            'nama' => 'Pengguna Syarikat',
+            'no_telefon' => '0123456789',
+            'email' => 'syarikat@example.com',
+            'no_kp' => '900101-01-1234',
+            'jawatan' => 'Pengurus',
+            'nama_syarikat' => 'Syarikat Gagal Sdn Bhd',
+            'tarikh_permohonan' => '2026-07-23',
+            'no_kelulusan' => 'JKDM-003',
+            'no_pesanan_belian' => 'PO-003',
+            'alamat' => 'Alamat Gagal',
+            'negeri' => 'Melaka',
+            'tandatangan_nama' => 'Pengguna Syarikat',
+            'tandatangan_no_kp' => '900101-01-1234',
+            'tandatangan_jawatan' => 'Pengurus',
+            'pembekal_nama' => 'Pembekal Sdn Bhd',
+            'pembekal_alamat' => 'Alamat Pembekal',
+            'barangs' => [],
+            'attachments' => [],
+            'status' => 'Tidak diluluskan',
+        ]);
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.senaraipermohonan.print', ['status' => 'semua']));
+
+        $response->assertOk();
+        $response->assertSeeInOrder([
+            $approved->nama_syarikat,
+            $pending->nama_syarikat,
+            $failed->nama_syarikat,
+        ], false);
+        $response->assertSee('Tarikh Tamat', false);
+        $response->assertDontSee('Jana Sijil Pengecualian', false);
+        $response->assertDontSee('semak', false);
+    }
 }

@@ -15,5 +15,7 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
+        $response->assertSee('Daftar Masuk MyPetroleum', false);
+        $response->assertDontSee('data-theme-toggle', false);
     }
 }

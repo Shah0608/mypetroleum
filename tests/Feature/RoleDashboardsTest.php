@@ -249,4 +249,70 @@ class RoleDashboardsTest extends TestCase
         $this->assertSame('jkdm', $jkdm->normalizedRole());
         $this->assertSame('ketua_unit_jkdm', $ketuaUnit->normalizedRole());
     }
+
+    public function test_role_dashboard_layout_shows_theme_toggle_for_logged_in_users(): void
+    {
+        $pelulus = User::query()->create([
+            'name' => 'Pelulus',
+            'login_id' => 'pelulus-1',
+            'role' => 'pelulus',
+            'password' => Hash::make('password'),
+        ]);
+
+        $response = $this->actingAs($pelulus)->get(route('pelulus.utama'));
+
+        $response->assertOk();
+        $response->assertSee('data-theme-toggle', false);
+        $response->assertSee(asset('images/kastam-diraja-malaysia-seeklogo.png'), false);
+    }
+
+    public function test_role_dashboard_layout_uses_default_user_avatar_for_syarikat_users_without_profile_photo(): void
+    {
+        $syarikat = User::query()->create([
+            'name' => 'Syarikat',
+            'login_id' => 'syarikat-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        $this->assertSame(asset('images/default-user-avatar.svg'), $syarikat->avatarUrl());
+    }
+
+    public function test_role_dashboard_layout_uses_kastam_avatar_for_officer_roles_without_profile_photo(): void
+    {
+        $roles = ['admin', 'jkdm', 'ketua_unit_jkdm', 'pelulus'];
+
+        foreach ($roles as $role) {
+            $user = User::query()->create([
+                'name' => ucfirst($role),
+                'login_id' => $role.'-1',
+                'role' => $role,
+                'password' => Hash::make('password'),
+            ]);
+
+            $this->assertSame(asset('images/kastam-diraja-malaysia-seeklogo.png'), $user->avatarUrl());
+        }
+    }
+
+    public function test_user_role_labels_are_human_readable(): void
+    {
+        $cases = [
+            'syarikat' => 'PEMOHON',
+            'jkdm' => 'PEGAWAI VERIFIKASI',
+            'ketua_unit_jkdm' => 'PEGAWAI PENYOKONG',
+            'pelulus' => 'PEGAWAI PELULUS',
+            'admin' => 'ADMIN',
+        ];
+
+        foreach ($cases as $role => $expectedLabel) {
+            $user = User::query()->create([
+                'name' => ucfirst($role),
+                'login_id' => $role.'-label',
+                'role' => $role,
+                'password' => Hash::make('password'),
+            ]);
+
+            $this->assertSame($expectedLabel, $user->roleLabel());
+        }
+    }
 }

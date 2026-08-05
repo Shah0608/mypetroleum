@@ -29,7 +29,7 @@ class ProfileTest extends TestCase
         $response->assertRedirect(route('dashboard'));
     }
 
-    public function test_profile_information_can_be_updated_from_the_header_avatar_form(): void
+    public function test_profile_information_can_be_updated_from_the_profile_form(): void
     {
         Storage::fake('public');
 
@@ -58,6 +58,39 @@ class ProfileTest extends TestCase
         Storage::disk('public')->assertExists($user->avatar_path);
     }
 
+    public function test_header_avatar_upload_can_save_without_resubmitting_the_name(): void
+    {
+        Storage::fake('public');
+
+        $user = User::query()->create([
+            'name' => 'Profile User',
+            'login_id' => 'profile-user-1',
+            'role' => 'syarikat',
+            'password' => Hash::make('password'),
+        ]);
+
+        $response = $this
+            ->actingAs($user)
+            ->patch('/profile', [
+                'avatar' => UploadedFile::fake()->create('avatar.jpg', 100, 'image/jpeg'),
+            ], [
+                'Accept' => 'application/json',
+                'X-Requested-With' => 'XMLHttpRequest',
+            ]);
+
+        $response
+            ->assertOk()
+            ->assertJson([
+                'status' => 'profile-updated',
+            ]);
+
+        $user->refresh();
+
+        $this->assertSame('Profile User', $user->name);
+        $this->assertNotNull($user->avatar_path);
+        Storage::disk('public')->assertExists($user->avatar_path);
+    }
+
     public function test_dashboard_header_shows_the_avatar_upload_field(): void
     {
         $user = User::query()->create([
@@ -73,6 +106,7 @@ class ProfileTest extends TestCase
 
         $response
             ->assertOk()
+            ->assertSee('enctype="multipart/form-data"', false)
             ->assertSee('name="avatar"', false)
             ->assertSee('id="header-avatar-preview"', false)
             ->assertSee('onchange="', false);

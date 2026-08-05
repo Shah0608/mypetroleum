@@ -26,7 +26,11 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse|JsonResponse
     {
         $user = $request->user();
-        $user->fill($request->validated());
+        $validated = $request->validated();
+
+        if (array_key_exists('name', $validated) && filled($validated['name'])) {
+            $user->name = $validated['name'];
+        }
 
         if ($request->hasFile('avatar')) {
             if ($user->avatar_path) {

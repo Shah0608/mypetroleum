@@ -62,7 +62,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
                     <!-- Main Harbor Image Box (Spans 2 columns) -->
-                    <div class="md:col-span-2 border border-gray-300 p-1 bg-white">
+                    <div class="md:col-span-2 border border-blue-30 p-1 bg-white">
                         <!-- Using local image from images folder -->
                         <img src="{{ asset('images/gambar terminal.png') }}" alt="Bunker Petroleum Terminal" class="w-full h-64 object-cover">
                     </div>

@@ -134,6 +134,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->middleware('role:pelulus')->name('pelulus.utama');
     Route::get('/pelulus/senarai-pengguna', [PelulusController::class, 'users'])->middleware('role:pelulus')->name('pelulus.senarai-pengguna');
     Route::get('/pelulus/senaraipermohonan', [PelulusController::class, 'applications'])->middleware('role:pelulus')->name('pelulus.senaraipermohonan');
+    Route::get('/pelulus/senaraipermohonan/export', [PelulusController::class, 'exportApplications'])->middleware('role:pelulus')->name('pelulus.senaraipermohonan.export');
+    Route::get('/pelulus/senaraipermohonan/print', [PelulusController::class, 'printApplications'])->middleware('role:pelulus')->name('pelulus.senaraipermohonan.print');
     Route::get('/pelulus/status-permohonan', [PelulusController::class, 'approvedApplications'])->middleware('role:pelulus')->name('pelulus.status-permohonan');
     Route::get('/pelulus/status-permohonan/pending', [PelulusController::class, 'pendingApplications'])->middleware('role:pelulus')->name('pelulus.status-permohonan.pending');
     Route::get('/pelulus/status-permohonan/gagal', [PelulusController::class, 'failedApplications'])->middleware('role:pelulus')->name('pelulus.status-permohonan.failed');
