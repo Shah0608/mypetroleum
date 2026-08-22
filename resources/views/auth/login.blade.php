@@ -3,7 +3,7 @@
         <div class="text-center">
             <div class="mx-auto flex flex-wrap items-center justify-center gap-6">
                 <img src="{{ asset('images/kastam-diraja-malaysia-seeklogo.png') }}" alt="Kastam Diraja Malaysia" class="h-20 w-auto object-contain" />
-                <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="MyPetroleum" class="h-24 w-auto object-contain" />
+                <img src="{{ asset('images/logo_petrocustoms2.png') }}" alt="MyPetroleum" class="h-24 w-auto object-contain" />
             </div>
 
             <div class="mt-6">

@@ -11,7 +11,7 @@
     <header class="mp-header">
         <div class="mp-left">
             <img src="{{ asset('images/kastam-diraja-malaysia-seeklogo.png') }}" alt="Kastam">
-            <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="MyPetroleum">
+            <img src="{{ asset('images/logo_petrocustoms1.png') }}" alt="MyPetroleum">
         </div>
         <nav class="mp-nav">
             <a href="{{ url('/') }}">Utama</a>

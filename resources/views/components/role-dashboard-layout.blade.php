@@ -139,15 +139,18 @@
         <main class="mx-auto max-w-[1200px] px-4 py-5 sm:px-6 lg:px-8">
             <section class="rounded-3xl bg-sky-700 px-3 py-3 text-white transition-colors duration-300 dark:bg-slate-900">
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-6">
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <img src="{{ asset('images/kastam-diraja-malaysia-seeklogo.png') }}" alt="Logo Kastam Diraja Malaysia" class="h-14 w-14 shrink-0 object-contain sm:h-20 sm:w-20" />
-                        <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="Logo MyPetroleum" class="h-14 w-14 shrink-0 object-contain sm:h-20 sm:w-40" />
+                    <div class="flex items-center">
+                        <img
+                            src="{{ asset('images/double_logo.png') }}"
+                            alt="Logo Kastam Diraja Malaysia dan MyPetroleum"
+                            class="h-32 w-auto shrink-0 object-contain sm:h-15 lg:h-15"
+                        />
                     </div>
 
                     <div class="flex flex-1 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div class="min-w-0">
                             <h1 class="text-3xl font-bold leading-tight text-white drop-shadow sm:text-5xl">Sistem MyPetroleum </h1>
-                            <p class="mt-1 text-sm italic text-sky-100 sm:text-lg">{{ $subtitle ?: 'Sistem Maklumat Bunker Petroleum' }}</p>
+                            <p class="mt-3 text-sm italic text-sky-100 sm:mt-4 sm:text-lg">{{ $subtitle ?: 'Sistem Maklumat Bunker Petroleum' }}</p>
                         </div>
 
                         <div class="w-full max-w-sm rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-white shadow-lg shadow-slate-950/15 backdrop-blur-sm sm:w-fit">

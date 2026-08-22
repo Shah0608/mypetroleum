@@ -44,7 +44,7 @@
                             </div>
                         </div>
 
-                        <img src="{{ asset('images/logo_mypetroleum-removebg-preview.png') }}" alt="Logo MyPetroleum" class="h-14 w-auto object-contain">
+                        <img src="{{ asset('images/logo_petrocustoms1.png') }}" alt="Logo MyPetroleum" class="h-14 w-auto object-contain">
                     </div>
 
                     <!-- Navigation Tabs (Blue buttons below logos) -->
