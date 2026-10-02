@@ -252,4 +252,24 @@ class JkdmController extends Controller
             fclose($handle);
         }, 'laporan-cjp-'.now()->format('Ymd-His').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
+
+    public function previewReport(LaporanCjp $laporan): mixed
+    {
+        return view('pdf.laporan-cjp', ['laporan' => $laporan, 'previewMode' => true]);
+    }
+
+    public function printReport(LaporanCjp $laporan): Response
+    {
+        return response()->view('pdf.laporan-cjp', ['laporan' => $laporan, 'printMode' => true]);
+    }
+
+    public function ketuaPreviewReport(LaporanCjp $laporan): mixed
+    {
+        return view('pdf.laporan-cjp', ['laporan' => $laporan, 'previewMode' => true]);
+    }
+
+    public function ketuaPrintReport(LaporanCjp $laporan): Response
+    {
+        return response()->view('pdf.laporan-cjp', ['laporan' => $laporan, 'printMode' => true]);
+    }
 }

@@ -41,34 +41,33 @@
                 <thead class="bg-slate-100 text-left text-xs uppercase text-slate-700">
                     <tr>
                         <th class="border-r border-slate-200 p-3">Negeri</th>
-                        <th class="border-r border-slate-200 p-3">Nama Syarikat</th>
                         <th class="border-r border-slate-200 p-3 text-center">Tahun</th>
                         <th class="border-r border-slate-200 p-3 text-center">Bulan</th>
-                        <th class="p-3 text-center">Laporan CJ(P)</th>
+                        <th class="border-r border-slate-200 p-3">No. Sijil Pengecualian</th>
+                        <th class="border-r border-slate-200 p-3 text-right">Kuantiti Diluluskan</th>
+                        <th class="border-r border-slate-200 p-3 text-right">Baki Kuantiti Diluluskan</th>
+                        <th class="p-3 text-center">Laporan PDF</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 bg-white">
                     @forelse($laporans as $laporan)
                         <tr class="hover:bg-slate-50">
                             <td class="border-r border-slate-200 p-3">{{ $laporan->negeri }}</td>
-                            <td class="border-r border-slate-200 p-3 font-semibold text-slate-900">{{ $laporan->nama_syarikat }}</td>
                             <td class="border-r border-slate-200 p-3 text-center">{{ $laporan->tahun }}</td>
                             <td class="border-r border-slate-200 p-3 text-center">{{ $laporan->bulan }}</td>
-                            <td class="p-3 text-center">
-                                @if($laporan->fail_path)
-                                    <a href="{{ asset('storage/'.$laporan->fail_path) }}" target="_blank" class="inline-flex rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500">pdf</a>
-                                @else
-                                    -
-                                @endif
-                            </td>
+                            <td class="border-r border-slate-200 p-3">{{ $laporan->no_sijil_pengecualian ?? '-' }}</td>
+                            <td class="border-r border-slate-200 p-3 text-right">{{ number_format((float) $laporan->kuantiti_diluluskan, 0, '.', ',') }}</td>
+                            <td class="border-r border-slate-200 p-3 text-right">{{ number_format((float) $laporan->baki_kuantiti_diluluskan, 0, '.', ',') }}</td>
+                            <td class="p-3 text-center"><button type="button" onclick="openLaporanCjpPreview(@js(route('jkdm.laporan.preview', $laporan)))" class="inline-flex rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500">pdf</button></td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="p-8 text-center text-slate-400">Tiada rekod laporan dijumpai.</td>
+                            <td colspan="7" class="p-8 text-center text-slate-400">Tiada rekod laporan dijumpai.</td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
+    @include('partials.laporan-cjp-print-modal', ['modalId' => 'jkdm-laporan-preview-modal', 'frameId' => 'jkdm-laporan-preview-frame'])
 </x-role-dashboard-layout>

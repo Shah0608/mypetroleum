@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateLaporanCjpRequest;
 use App\Models\LaporanCjp;
 use App\Models\Permohonan58A;
 use App\Models\User;
@@ -252,6 +253,39 @@ class AdminController extends Controller
         }, 'laporan-cjp-admin-'.now()->format('Ymd-His').'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
+    public function editReport(LaporanCjp $laporan): mixed
+    {
+        return view('admin.editlaporan', compact('laporan'));
+    }
+
+    public function updateReport(UpdateLaporanCjpRequest $request, LaporanCjp $laporan): RedirectResponse
+    {
+        $data = $request->validated();
+        $pembelians = $this->filledReportRows($data['pembelians'] ?? []);
+        $penjualans = $this->filledReportRows($data['penjualans'] ?? []);
+        $bakiAwal = (int) ($data['baki_awal'] ?? 0);
+
+        $laporan->update([
+            ...$data,
+            'pembelians' => $pembelians,
+            'penjualans' => $penjualans,
+            'baki_kuantiti_diluluskan' => max(0, (int) $laporan->kuantiti_diluluskan - $this->sumReportQuantity($pembelians)),
+            'baki_akhir' => $bakiAwal + $this->sumReportQuantity($pembelians) - $this->sumReportQuantity($penjualans),
+        ]);
+
+        return to_route('admin.senarailaporan')->with('success', 'Laporan berjaya dikemaskini.');
+    }
+
+    public function previewReport(LaporanCjp $laporan): mixed
+    {
+        return view('pdf.laporan-cjp', ['laporan' => $laporan, 'previewMode' => true]);
+    }
+
+    public function printReport(LaporanCjp $laporan): Response
+    {
+        return response()->view('pdf.laporan-cjp', ['laporan' => $laporan, 'printMode' => true]);
+    }
+
     public function destroyApplication(Permohonan58A $permohonan): RedirectResponse
     {
         $permohonan->delete();
@@ -264,5 +298,25 @@ class AdminController extends Controller
         $laporan->delete();
 
         return back()->with('success', 'Laporan berjaya dipadam.');
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     * @return array<int, array<string, mixed>>
+     */
+    private function filledReportRows(array $rows): array
+    {
+        return collect($rows)
+            ->filter(fn (array $row): bool => collect($row)->filter(fn ($value): bool => filled($value))->isNotEmpty())
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<int, array<string, mixed>>  $rows
+     */
+    private function sumReportQuantity(array $rows): int
+    {
+        return (int) collect($rows)->sum(fn (array $row): int => (int) ($row['kuantiti'] ?? 0));
     }
 }

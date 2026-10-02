@@ -47,10 +47,12 @@
                 <thead class="bg-slate-100 text-left text-xs uppercase text-slate-700">
                     <tr>
                         <th class="px-4 py-3">Negeri</th>
-                        <th class="px-4 py-3">Nama Syarikat</th>
                         <th class="px-4 py-3">Tahun</th>
                         <th class="px-4 py-3">Bulan</th>
-                        <th class="px-4 py-3">Laporan</th>
+                        <th class="px-4 py-3">No. Sijil Pengecualian</th>
+                        <th class="px-4 py-3 text-right">Kuantiti Diluluskan</th>
+                        <th class="px-4 py-3 text-right">Baki Kuantiti Diluluskan</th>
+                        <th class="px-4 py-3 text-center">Laporan PDF</th>
                         <th class="px-4 py-3 text-center">Tindakan</th>
                     </tr>
                 </thead>
@@ -58,29 +60,30 @@
                     @forelse($laporans as $laporan)
                         <tr>
                             <td class="px-4 py-3">{{ $laporan->negeri }}</td>
-                            <td class="px-4 py-3 font-semibold text-slate-900">{{ $laporan->nama_syarikat }}</td>
                             <td class="px-4 py-3">{{ $laporan->tahun }}</td>
                             <td class="px-4 py-3">{{ $laporan->bulan }}</td>
-                            <td class="px-4 py-3">
-                                @if($laporan->fail_path)
-                                    <a href="{{ asset('storage/'.$laporan->fail_path) }}" target="_blank" class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500">pdf</a>
-                                @else
-                                    -
-                                @endif
-                            </td>
+                            <td class="px-4 py-3">{{ $laporan->no_sijil_pengecualian ?? '-' }}</td>
+                            <td class="px-4 py-3 text-right">{{ number_format((float) $laporan->kuantiti_diluluskan, 0, '.', ',') }}</td>
+                            <td class="px-4 py-3 text-right">{{ number_format((float) $laporan->baki_kuantiti_diluluskan, 0, '.', ',') }}</td>
+                            <td class="px-4 py-3 text-center"><button type="button" onclick="openLaporanCjpPreview(@js(route('admin.laporan.preview', $laporan)))" class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500">pdf</button></td>
                             <td class="px-4 py-3 text-center">
-                                <form action="{{ route('admin.laporan.destroy', $laporan) }}" method="POST" onsubmit="return confirm('Padam laporan ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700">Padam</button>
-                                </form>
+                                <div class="flex justify-center gap-2">
+                                    <a href="{{ route('admin.laporan.edit', $laporan) }}" class="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-700">Edit</a>
+                                    <form action="{{ route('admin.laporan.destroy', $laporan) }}" method="POST" onsubmit="return confirm('Padam laporan ini?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700">Padam</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="px-4 py-8 text-center text-slate-400">Tiada laporan dijumpai.</td></tr>
+                        <tr><td colspan="8" class="px-4 py-8 text-center text-slate-400">Tiada laporan dijumpai.</td></tr>
                     @endforelse
                 </tbody>
             </table>
         </div>
     </div>
+
+    @include('partials.laporan-cjp-print-modal', ['modalId' => 'admin-laporan-preview-modal', 'frameId' => 'admin-laporan-preview-frame'])
 </x-role-dashboard-layout>
